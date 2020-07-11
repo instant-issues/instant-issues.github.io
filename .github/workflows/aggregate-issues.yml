@@ -1,0 +1,16 @@
+name: Aggregate issues for Instant Issues
+
+on:
+  schedule:
+    - cron:  '0 * * * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: instant-issues/instant-issues.github.io@master
+
+    - name: Run a one-line script
+      run: echo Hello, world!
