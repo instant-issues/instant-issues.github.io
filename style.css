@@ -1,0 +1,41 @@
+html {
+	height: 100%;
+}
+body {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	max-width: 800px;
+	margin: 0 auto;
+	font-family: sans-serif;
+}
+h1 {
+	display: inline;
+	vertical-align: middle;
+	margin-right: 1em;
+}
+.form {
+	margin-top: 1em;
+}
+.result {
+	display: block;
+	text-decoration: none;
+	padding: 0.2em 0;
+}
+#results {
+	padding-top: 1em;
+	margin: 0 1em;
+	overflow: auto;
+}
+#search {
+	width: 100%;
+    border-radius: 30px;
+    font-size: 1em;
+    box-sizing: border-box;
+    padding: 1em 1.5em;
+    border: 1px solid #ccc;
+    box-shadow: 5px 5px 10px #ccc;
+}
+.result:hover {
+	background: #f5f5f5;
+}

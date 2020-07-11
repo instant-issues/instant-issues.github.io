@@ -1,0 +1,10 @@
+name: Aggregate downstreams to a single JSON file.
+author: Gittenburg <gittenburg@fsinf.at>
+inputs:
+  token:
+    description: GitHub API token
+    required: true
+runs:
+  using: docker
+  image: Dockerfile
+  entrypoint: /entrypoint.sh
