@@ -1,11 +1,44 @@
 const searchInput = document.getElementById('search');
 const resultsContainer = document.getElementById('results');
 const repoInput = document.getElementById('repo');
+const labelContainer = document.getElementById('labels');
 
 let repoData = null;
 let downstreams = null;
+let labelFilters = [];
 
-function displayIssues(issues, pulls){
+let activeLabel = null;
+
+labelContainer.addEventListener('click', e => {
+	if (activeLabel)
+		activeLabel.classList.remove('active');
+
+	if (activeLabel == e.target){
+		activeLabel = null;
+		labelFilters = [];
+	} else {
+		activeLabel = e.target;
+		e.target.classList.add('active');
+		labelFilters = [e.target.textContent];
+	}
+	refreshResults();
+});
+
+let pattern;
+
+function filterIssue(issue){
+	if (labelFilters.length > 0 && !issue.labels.includes(labelFilters[0]))
+		return false;
+	return issue.title.toLowerCase().search(pattern) != -1;
+}
+
+function refreshResults(){
+	let issues = repoData.issues;
+	let pulls = repoData.pulls;
+	pattern = '\\b' + searchInput.value.toLowerCase();
+	issues = repoData.issues.filter(filterIssue);
+	pulls = repoData.pulls.filter(filterIssue);
+
 	resultsContainer.innerHTML = '';
 	issues.forEach(issue => {
 		const a = document.createElement('a');
@@ -18,14 +51,16 @@ function displayIssues(issues, pulls){
 
 async function loadIssues(data){
 	repoData = data;
-	displayIssues(repoData.issues, repoData.pulls);
+	refreshResults();
 
-	searchInput.addEventListener('input', (e) => {
-		const pattern = '\\b' + e.target.value.toLowerCase();
-		displayIssues(
-			repoData.issues.filter(i => i.title.toLowerCase().search(pattern) != -1),
-			repoData.pulls.filter(i => i.title.toLowerCase().search(pattern) != -1)
-		);
+	searchInput.addEventListener('input', refreshResults);
+
+	labelContainer.innerHTML = '';
+	repoData.labels.forEach(label => {
+		let div = document.createElement('div');
+		div.className = 'label';
+		div.textContent = label.name;
+		labelContainer.appendChild(div);
 	});
 }
 

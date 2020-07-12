@@ -1,13 +1,30 @@
-html {
+html, body, main {
 	height: 100%;
+	font-family: sans-serif;
 }
 body {
+	margin: 0;
+	display: flex;
+	justify-content: center;
+}
+#labels {
+	margin-right: 1em;
+	overflow: auto;
+	min-width: 250px;
+	max-width: 250px;
+}
+.label {
+	padding: 0.2em 0.3em;
+	cursor: pointer;
+}
+.label.active {
+	background: lightblue;
+}
+main {
 	display: flex;
 	flex-direction: column;
 	height: 100%;
-	max-width: 800px;
-	margin: 0 auto;
-	font-family: sans-serif;
+	width: 800px;
 }
 h1 {
 	display: inline;
