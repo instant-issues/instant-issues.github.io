@@ -12,6 +12,7 @@ body {
 	min-width: 250px;
 	max-width: 250px;
 	border-top: 1px solid #ccc;
+	user-select: none;
 }
 .label {
 	padding: 0.2em 0.3em;
