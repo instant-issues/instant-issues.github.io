@@ -2,12 +2,17 @@ const searchInput = document.getElementById('search');
 const resultsContainer = document.getElementById('results');
 const repoInput = document.getElementById('repo');
 const labelContainer = document.getElementById('labels');
+const typeSelect = document.getElementById('type');
 
 let repoData = null;
 let downstreams = null;
 let labelFilters = [];
 
 let activeLabel = null;
+
+typeSelect.addEventListener('change', e => {
+	refreshResults();
+});
 
 labelContainer.addEventListener('click', e => {
 	if (activeLabel)
@@ -33,14 +38,11 @@ function filterIssue(issue){
 }
 
 function refreshResults(){
-	let issues = repoData.issues;
-	let pulls = repoData.pulls;
-	pattern = '\\b' + searchInput.value.toLowerCase();
-	issues = repoData.issues.filter(filterIssue);
-	pulls = repoData.pulls.filter(filterIssue);
-
 	resultsContainer.innerHTML = '';
-	issues.forEach(issue => {
+	pattern = '\\b' + searchInput.value.toLowerCase();
+
+	(typeSelect.value == 'issues' ? repoData.issues : repoData.pulls)
+	.filter(filterIssue).forEach(issue => {
 		const a = document.createElement('a');
 		a.href = `https://github.com/${repoData.repo}/issues/${issue.num}`;
 		a.className = 'result';
