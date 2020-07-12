@@ -95,6 +95,7 @@ async function loadIssues(data){
 			alert('not yet aggregated');
 		}
 	} else {
-		location.href = '?repo=zulip/zulip';
+		searchInput.remove();
+		resultsContainer.innerHTML = 'Which repository\'s issues do you want to view? You can try out <a href="/?repo=zulip/zulip">zulip/zulip</a>.';
 	}
 })();
