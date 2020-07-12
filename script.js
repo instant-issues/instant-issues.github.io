@@ -47,6 +47,7 @@ function refreshResults(){
 		a.href = `https://github.com/${repoData.repo}/issues/${issue.num}`;
 		a.className = 'result';
 		a.textContent = issue.title;
+		a.target = '_blank';
 		resultsContainer.appendChild(a);
 	});
 }
