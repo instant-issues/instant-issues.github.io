@@ -6,14 +6,17 @@
 </head>
 <body>
 	<noscript>This page requires JavaScript.</noscript>
-	<aside id=labels></aside>
-	<main>
-		<div>
-		<form>
-		<h1>Instant Issues for github.com/<input id=repo name=repo placeholder="e.g. zulip/zulip"></h1>
-		</form>
+	<aside>
+		<h1>Instant Issues</h1>
+		<p>
 		<a href="https://github.com/instant-issues/instant-issues.github.io#readme">Learn more & contribute</a>
-		</div>
+		</p>
+		<div id=labels></div>
+	</aside>
+	<main>
+		<form>
+		github.com/<input id=repo name=repo placeholder="e.g. zulip/zulip">
+		</form>
 
 		<div class=form>
 			<input id=search placeholder=Search... autofocus autocomplete=off>
