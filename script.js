@@ -21,6 +21,13 @@ document.querySelector('.tabs').addEventListener('click', e => {
 	searchInput.focus();
 });
 
+document.getElementById('labels').addEventListener('keypress', e => {
+	if (event.keyCode === 13) {
+		e.target.click();
+	}
+});
+
+
 suggestedLabelContainer.addEventListener('click', e => {
 	selectedLabelContainer.appendChild(e.target);
 	labelFilters[e.target.textContent] = true;
@@ -51,6 +58,7 @@ function suggestLabels(){
 			let div = document.createElement('div');
 			div.className = 'label';
 			div.textContent = label;
+			div.tabIndex = 0;
 			suggestedLabelContainer.appendChild(div);
 		});
 	}
