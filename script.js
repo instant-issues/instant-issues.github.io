@@ -3,6 +3,7 @@ const resultsContainer = document.getElementById('results');
 const repoInput = document.getElementById('repo');
 const labelContainer = document.getElementById('labels');
 const typeSelect = document.getElementById('type');
+const downstreamDatalist = document.getElementById('downstreams');
 
 let repoData = null;
 let downstreams = null;
@@ -69,6 +70,11 @@ async function loadIssues(data){
 
 (async function load(){
 	downstreams = await (await fetch('https://raw.githubusercontent.com/instant-issues/instant-issues.github.io/downstreams/downstreams.json')).json();
+	Object.keys(downstreams).forEach(downstream => {
+		const opt = document.createElement('option');
+		opt.value = downstream;
+		downstreamDatalist.appendChild(opt);
+	});
 
 	const urlParams = new URL(document.location).searchParams;
 	if (urlParams.has('url')){

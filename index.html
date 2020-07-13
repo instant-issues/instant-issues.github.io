@@ -18,7 +18,10 @@
 	</aside>
 	<main>
 		<form>
-		github.com/<input id=repo name=repo placeholder="user/repository" size=15>
+			<datalist id=downstreams>
+			</datalist>
+
+		github.com/<input id=repo name=repo list=downstreams placeholder="user/repository" autocomplete=off>
 
 			<small>
 				Search the titles of open
