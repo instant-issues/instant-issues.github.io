@@ -105,6 +105,6 @@ async function loadIssues(data){
 			resultsContainer.innerHTML = 'repository not found';
 		}
 	} else {
-		resultsContainer.innerHTML = 'Which repository\'s issues do you want to view? You can try out <a href="/?repo=zulip/zulip">zulip/zulip</a>.';
+		resultsContainer.innerHTML = 'Which repository\'s issues do you want to view?<p><a href="/?repo=zulip/zulip">Try out zulip/zulip.</a></p>';
 	}
 })();
