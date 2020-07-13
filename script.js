@@ -9,23 +9,25 @@ let repoData = null;
 let downstreams = null;
 let labelFilters = [];
 
-let activeLabel = null;
-
 typeSelect.addEventListener('change', e => {
 	refreshResults();
 });
 
 labelContainer.addEventListener('click', e => {
-	if (activeLabel)
-		activeLabel.classList.remove('active');
+	const wasActive = e.target.classList.contains('active');
 
-	if (activeLabel == e.target){
-		activeLabel = null;
+	if (wasActive){
+		labelFilters = labelFilters.filter(f => f != e.target.textContent);
+		e.target.classList.remove('active');
+	} else if (!e.shiftKey){
+		document.querySelectorAll('.label.active').forEach(el => {
+			el.classList.remove('active');
+		});
 		labelFilters = [];
-	} else {
-		activeLabel = e.target;
+	}
+	if (!wasActive){
 		e.target.classList.add('active');
-		labelFilters = [e.target.textContent];
+		labelFilters.push(e.target.textContent);
 	}
 	refreshResults();
 });
@@ -33,9 +35,8 @@ labelContainer.addEventListener('click', e => {
 let pattern;
 
 function filterIssue(issue){
-	if (labelFilters.length > 0 && !issue.labels.includes(labelFilters[0]))
-		return false;
-	return issue.title.toLowerCase().search(pattern) != -1;
+	return issue.title.toLowerCase().search(pattern) != -1
+		&& labelFilters.filter(l => issue.labels.includes(l)).length == labelFilters.length;
 }
 
 function refreshResults(){
