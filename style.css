@@ -20,7 +20,7 @@ body {
 	cursor: pointer;
 }
 .label.active {
-	background: lightblue;
+	background: #c4e6cc;
 }
 main, aside {
 	display: flex;
