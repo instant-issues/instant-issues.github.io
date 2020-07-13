@@ -12,7 +12,6 @@ body {
 	min-width: 250px;
 	max-width: 250px;
 	border-top: 1px solid #ccc;
-	border-bottom: 1px solid #ccc;
 	user-select: none;
 }
 .label {
