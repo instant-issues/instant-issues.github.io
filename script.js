@@ -70,6 +70,7 @@ function refreshResults(){
 		a.className = 'result';
 		a.textContent = issue.title;
 		a.target = '_blank';
+		a.title = issue.labels.join(', ');
 		resultsContainer.appendChild(a);
 	});
 }
