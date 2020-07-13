@@ -11,20 +11,18 @@
 			<h1><a href="https://github.com/instant-issues/instant-issues.github.io">Instant Issues</a></h1>
 			<a class="github-button" href="https://github.com/instant-issues/instant-issues.github.io" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star instant-issues/instant-issues.github.io on GitHub">Star</a>
 		</header>
+		<nav>
 		<form>
 			<datalist id=downstreams>
 			</datalist>
 
-		github.com/<input id=repo name=repo list=downstreams autofocus placeholder="user/repository" autocomplete=off>/<select id=type>
-					<option>issues</option>
-					<option>pulls</option>
-				</select>.
-
-			<small>
-				Only titles are searched.
-				Regex works.
-			</small>
+		github.com/<input id=repo name=repo list=downstreams autofocus placeholder="user/repository" autocomplete=off>
 		</form>
+		<div class=tabs>
+			<span class="tab active">Issues</span>
+			<span class=tab>Pulls</span>
+		</div>
+		</nav>
 
 		<div class=form>
 			<input id=search placeholder=Search... autocomplete=off class=if-loaded>

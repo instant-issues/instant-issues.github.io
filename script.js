@@ -3,7 +3,6 @@ const resultsContainer = document.getElementById('results');
 const repoInput = document.getElementById('repo');
 const selectedLabelContainer = document.getElementById('selectedLabels');
 const suggestedLabelContainer = document.getElementById('suggestedLabels');
-const typeSelect = document.getElementById('type');
 const downstreamDatalist = document.getElementById('downstreams');
 
 let repoData = null;
@@ -12,7 +11,12 @@ const labelFilters = {};
 
 let labelNames = [];
 
-typeSelect.addEventListener('change', e => {
+let activeTab = document.querySelector('.tab.active');
+
+document.querySelector('.tabs').addEventListener('click', e => {
+	activeTab.classList.remove('active');
+	activeTab = e.target;
+	e.target.classList.add('active');
 	refreshResults();
 });
 
@@ -52,7 +56,7 @@ function refreshResults(){
 	resultsContainer.innerHTML = '';
 	pattern = '\\b' + searchInput.value.toLowerCase();
 
-	(typeSelect.value == 'issues' ? repoData.issues : repoData.pulls)
+	(activeTab.textContent == 'Issues' ? repoData.issues : repoData.pulls)
 	.filter(
 		issue =>
 		issue.title.toLowerCase().search(pattern) != -1

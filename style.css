@@ -72,6 +72,23 @@ header {
 .result:hover, .label:not(.active):hover {
 	background: #f5f5f5;
 }
-#hint {
-	padding: 0.3em;
+.tabs {
+	display: flex;
+}
+.tab {
+	padding: 0.5em 2em;
+	cursor: pointer;
+	user-select: none;
+}
+.tab.active {
+	border: 1px solid #ccc;
+	border-bottom: 0;
+	background: #f5f5f5;
+}
+nav {
+	display: flex;
+	align-items: center;
+}
+nav form {
+	margin-right: 1em;
 }
