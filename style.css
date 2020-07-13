@@ -39,6 +39,9 @@ h1 {
 #repo {
 	font-weight: bold;
 }
+.hidden {
+	display: none;
+}
 .info {
 	padding-bottom: 0.3em;
 	display: flex;

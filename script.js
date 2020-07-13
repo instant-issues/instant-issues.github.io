@@ -76,26 +76,29 @@ async function loadIssues(data){
 		if (res.ok){
 			loadIssues(await res.json());
 		} else {
-			alert("couldn't load URL");
+			resultsContainer.innerHTML = "couldn't load URL";
 		}
 	} else if (urlParams.has('repo')){
 		const repo = urlParams.get('repo');
 		repoInput.value = repo;
 		let res = await fetch(`https://raw.githubusercontent.com/${repo}/issues/${repo}.json`);
 		if (res.ok){
+			searchInput.classList.remove('hidden');
 			loadIssues(await res.json());
 		} else if (repo in downstreams){
 			res = await fetch(`https://raw.githubusercontent.com/${downstreams[repo]}/issues/${repo}.json`);
 			if (res.ok){
+				searchInput.classList.remove('hidden');
 				loadIssues(await res.json());
 			} else {
-				alert('failed to load downstream');
+				resultsContainer.innerHTML = 'failed to load downstream';
 			}
+		} else if ((await fetch('https://api.github.com/repos/' + repo, {method: 'head'})).ok){
+			resultsContainer.innerHTML = 'not yet aggregated, checkout the <a href="https://github.com/instant-issues/instant-issues.github.io#readme">the README</a> for instructions';
 		} else {
-			alert('not yet aggregated');
+			resultsContainer.innerHTML = 'repository not found';
 		}
 	} else {
-		searchInput.remove();
 		resultsContainer.innerHTML = 'Which repository\'s issues do you want to view? You can try out <a href="/?repo=zulip/zulip">zulip/zulip</a>.';
 	}
 })();
