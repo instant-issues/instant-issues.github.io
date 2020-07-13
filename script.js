@@ -18,6 +18,7 @@ document.querySelector('.tabs').addEventListener('click', e => {
 	activeTab = e.target;
 	e.target.classList.add('active');
 	refreshResults();
+	searchInput.focus();
 });
 
 suggestedLabelContainer.addEventListener('click', e => {
@@ -25,6 +26,7 @@ suggestedLabelContainer.addEventListener('click', e => {
 	labelFilters[e.target.textContent] = true;
 	searchInput.value = '';
 	refreshResults();
+	searchInput.focus();
 });
 
 selectedLabelContainer.addEventListener('click', e => {
@@ -32,6 +34,7 @@ selectedLabelContainer.addEventListener('click', e => {
 	delete labelFilters[e.target.textContent];
 	refreshResults();
 	suggestLabels();
+	searchInput.focus();
 });
 
 let pattern;
