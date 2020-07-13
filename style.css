@@ -6,6 +6,7 @@ body {
 	margin: 0;
 	display: flex;
 	justify-content: center;
+	box-sizing: border-box;
 }
 main {
 	display: flex;
@@ -53,7 +54,8 @@ header {
 .result {
 	display: block;
 	text-decoration: none;
-	padding: 0.2em 0;
+	padding: 0.3em 0;
+	word-break: break-word;
 }
 #results {
 	margin: 0 1em;
@@ -79,6 +81,7 @@ header {
 	padding: 0.5em 2em;
 	cursor: pointer;
 	user-select: none;
+	text-align: center;
 }
 .tab.active {
 	border: 1px solid #ccc;
@@ -88,7 +91,25 @@ header {
 nav {
 	display: flex;
 	align-items: center;
+	flex-wrap: wrap;
 }
 nav form {
 	margin-right: 1em;
+}
+@media (max-width: 1000px) {
+	header, nav, .form, .labels {
+		padding: 0 1em;
+	}
+	.result {
+		padding: 0.5em 0;
+	}
+}
+@media (max-width: 600px) {
+	.tabs {
+		width: 100%;
+	}
+	.tab {
+		margin-top: 1em;
+		flex-grow: 1;
+	}
 }
