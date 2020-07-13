@@ -85,7 +85,7 @@ async function loadIssues(data){
 		} else {
 			resultsContainer.innerHTML = "couldn't load URL";
 		}
-	} else if (urlParams.has('repo')){
+	} else if (urlParams.get('repo')){
 		const repo = urlParams.get('repo');
 		repoInput.value = repo;
 		let res = await fetch(`https://raw.githubusercontent.com/${repo}/issues/${repo}.json`);
