@@ -7,21 +7,7 @@ body {
 	display: flex;
 	justify-content: center;
 }
-#labels {
-	overflow: auto;
-	min-width: 250px;
-	max-width: 250px;
-	border-top: 1px solid #ccc;
-	user-select: none;
-}
-.label {
-	padding: 0.2em 0.3em;
-	cursor: pointer;
-}
-.label.active {
-	background: #c4e6cc;
-}
-main, aside {
+main {
 	display: flex;
 	flex-direction: column;
 	height: 100%;
@@ -29,12 +15,15 @@ main, aside {
 main {
 	width: 800px;
 }
-aside {
-	margin-right: 1em;
-}
 h1 {
+	display: inline;
 	font-size: 1.8em;
 	margin: 0.3em 0;
+	margin-right: 0.5em;
+}
+header {
+	display: flex;
+	align-items: center;
 }
 #repo {
 	font-weight: bold;
@@ -45,14 +34,21 @@ h1 {
 .loaded .if-loaded {
 	display: block;
 }
-.info {
-	padding-bottom: 0.3em;
-	display: flex;
-	align-items: center;
-	justify-content: space-evenly;
+.label {
+	display: inline-block;
+	border: 1px dashed #aaa;
+	padding: 0.1em;
+	margin-right: 0.5em;
+	margin-bottom: 1em;
+	cursor: pointer;
+	user-select: none;
 }
-form {
-	margin: 0.5em 0;
+#selectedLabels, #suggestedLabels {
+	display: inline-block;
+}
+#selectedLabels .label {
+	border-style: solid;
+	background: #eee;
 }
 .result {
 	display: block;
@@ -60,7 +56,6 @@ form {
 	padding: 0.2em 0;
 }
 #results {
-	padding-top: 1em;
 	margin: 0 1em;
 	overflow: auto;
 }
@@ -70,6 +65,7 @@ form {
     font-size: 1em;
     box-sizing: border-box;
     padding: 1em 1.5em;
+    margin: 0.5em 0;
     border: 1px solid #ccc;
     box-shadow: 5px 5px 10px #ccc;
 }

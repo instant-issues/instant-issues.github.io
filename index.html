@@ -6,36 +6,32 @@
 </head>
 <body>
 	<noscript>This page requires JavaScript.</noscript>
-	<aside>
-		<div>
-			<h1><a href="/">Instant Issues</a></h1>
-			<div class=info>
-			<a class="github-button" href="https://github.com/instant-issues/instant-issues.github.io" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star instant-issues/instant-issues.github.io on GitHub">Star</a>
-			<a href="https://github.com/instant-issues/instant-issues.github.io">Contribute</a>
-			</div>
-		</div>
-		<span id=hint class=if-loaded>Select multiple with <kbd>Shift</kbd>.</span>
-		<div id=labels></div>
-	</aside>
 	<main>
+		<header>
+			<h1><a href="https://github.com/instant-issues/instant-issues.github.io">Instant Issues</a></h1>
+			<a class="github-button" href="https://github.com/instant-issues/instant-issues.github.io" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star instant-issues/instant-issues.github.io on GitHub">Star</a>
+		</header>
 		<form>
 			<datalist id=downstreams>
 			</datalist>
 
-		github.com/<input id=repo name=repo list=downstreams autofocus placeholder="user/repository" autocomplete=off>
-
-			<small>
-				Search the titles of open
-				<select id=type>
+		github.com/<input id=repo name=repo list=downstreams autofocus placeholder="user/repository" autocomplete=off>/<select id=type>
 					<option>issues</option>
 					<option>pulls</option>
 				</select>.
+
+			<small>
+				Only titles are searched.
 				Regex works.
 			</small>
 		</form>
 
 		<div class=form>
 			<input id=search placeholder=Search... autocomplete=off class=if-loaded>
+		</div>
+		<div class=labels>
+			<div id=selectedLabels></div>
+			<div id=suggestedLabels></div>
 		</div>
 		<div id=results></div>
 	</main>

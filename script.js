@@ -1,42 +1,51 @@
 const searchInput = document.getElementById('search');
 const resultsContainer = document.getElementById('results');
 const repoInput = document.getElementById('repo');
-const labelContainer = document.getElementById('labels');
+const selectedLabelContainer = document.getElementById('selectedLabels');
+const suggestedLabelContainer = document.getElementById('suggestedLabels');
 const typeSelect = document.getElementById('type');
 const downstreamDatalist = document.getElementById('downstreams');
 
 let repoData = null;
 let downstreams = null;
-let labelFilters = [];
+const labelFilters = {};
+
+let labelNames = [];
 
 typeSelect.addEventListener('change', e => {
 	refreshResults();
 });
 
-labelContainer.addEventListener('click', e => {
-	const wasActive = e.target.classList.contains('active');
-
-	if (wasActive){
-		labelFilters = labelFilters.filter(f => f != e.target.textContent);
-		e.target.classList.remove('active');
-	} else if (!e.shiftKey){
-		document.querySelectorAll('.label.active').forEach(el => {
-			el.classList.remove('active');
-		});
-		labelFilters = [];
-	}
-	if (!wasActive){
-		e.target.classList.add('active');
-		labelFilters.push(e.target.textContent);
-	}
+suggestedLabelContainer.addEventListener('click', e => {
+	selectedLabelContainer.appendChild(e.target);
+	labelFilters[e.target.textContent] = true;
+	searchInput.value = '';
 	refreshResults();
+});
+
+selectedLabelContainer.addEventListener('click', e => {
+	e.target.remove();
+	delete labelFilters[e.target.textContent];
+	refreshResults();
+	suggestLabels();
 });
 
 let pattern;
 
-function filterIssue(issue){
-	return issue.title.toLowerCase().search(pattern) != -1
-		&& labelFilters.filter(l => issue.labels.includes(l)).length == labelFilters.length;
+function suggestLabels(){
+	suggestedLabelContainer.innerHTML = '';
+	if (searchInput.value.length > 1){
+		labelNames.filter(
+			n =>
+			n.toLowerCase().search(pattern) != -1
+			&& !labelFilters[n]
+		).forEach(label => {
+			let div = document.createElement('div');
+			div.className = 'label';
+			div.textContent = label;
+			suggestedLabelContainer.appendChild(div);
+		});
+	}
 }
 
 function refreshResults(){
@@ -44,7 +53,11 @@ function refreshResults(){
 	pattern = '\\b' + searchInput.value.toLowerCase();
 
 	(typeSelect.value == 'issues' ? repoData.issues : repoData.pulls)
-	.filter(filterIssue).forEach(issue => {
+	.filter(
+		issue =>
+		issue.title.toLowerCase().search(pattern) != -1
+		&& Object.keys(labelFilters).filter(l => issue.labels.includes(l)).length == Object.keys(labelFilters).length
+	).forEach(issue => {
 		const a = document.createElement('a');
 		a.href = `https://github.com/${repoData.repo}/issues/${issue.num}`;
 		a.className = 'result';
@@ -53,20 +66,15 @@ function refreshResults(){
 		resultsContainer.appendChild(a);
 	});
 }
+searchInput.addEventListener('input', e => {
+	refreshResults();
+	suggestLabels();
+});
 
 async function loadIssues(data){
 	repoData = data;
 	refreshResults();
-
-	searchInput.addEventListener('input', refreshResults);
-
-	labelContainer.innerHTML = '';
-	repoData.labels.forEach(label => {
-		let div = document.createElement('div');
-		div.className = 'label';
-		div.textContent = label.name;
-		labelContainer.appendChild(div);
-	});
+	labelNames = repoData.labels.map(label => label.name);
 	document.body.classList.add('loaded');
 	searchInput.focus();
 }
