@@ -67,6 +67,8 @@ async function loadIssues(data){
 		div.textContent = label.name;
 		labelContainer.appendChild(div);
 	});
+	searchInput.classList.remove('hidden');
+	searchInput.focus();
 }
 
 (async function load(){
@@ -90,12 +92,10 @@ async function loadIssues(data){
 		repoInput.value = repo;
 		let res = await fetch(`https://raw.githubusercontent.com/${repo}/issues/${repo}.json`);
 		if (res.ok){
-			searchInput.classList.remove('hidden');
 			loadIssues(await res.json());
 		} else if (repo in downstreams){
 			res = await fetch(`https://raw.githubusercontent.com/${downstreams[repo]}/issues/${repo}.json`);
 			if (res.ok){
-				searchInput.classList.remove('hidden');
 				loadIssues(await res.json());
 			} else {
 				resultsContainer.innerHTML = 'failed to load downstream';
