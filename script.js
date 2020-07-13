@@ -26,6 +26,7 @@ suggestedLabelContainer.addEventListener('click', e => {
 	labelFilters[e.target.textContent] = true;
 	searchInput.value = '';
 	refreshResults();
+	suggestLabels();
 	searchInput.focus();
 });
 
