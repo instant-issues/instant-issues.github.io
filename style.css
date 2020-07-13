@@ -40,8 +40,11 @@ h1 {
 #repo {
 	font-weight: bold;
 }
-.hidden {
+.if-loaded {
 	display: none;
+}
+.loaded .if-loaded {
+	display: block;
 }
 .info {
 	padding-bottom: 0.3em;

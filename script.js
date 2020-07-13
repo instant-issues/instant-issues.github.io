@@ -67,7 +67,7 @@ async function loadIssues(data){
 		div.textContent = label.name;
 		labelContainer.appendChild(div);
 	});
-	searchInput.classList.remove('hidden');
+	document.body.classList.add('loaded');
 	searchInput.focus();
 }
 
