@@ -15,9 +15,13 @@ If you want to use Instant Issues with repositories where you do not have write 
 you can create a new public repository and use the [downstream workflow](https://github.com/instant-issues/action#downstream-workflow).
 You will need to tag your repository with the [instant-issues-downstream](https://github.com/topics/instant-issues-downstream) topic for it to be discovered by the frontend.
 
+## Contributing
+
+Issues and pull requests are welcome!
+
 ## Why is there no user script?
 
 Because GitHub has a tight Content Security Policy we cannot patch the issue
-search with a UserScript. A browser addon would have the necessary privileges
-but it could also access your GitHub cookie, which is undesirable from a
-security perspective.
+search within github.com with a UserScript. A browser addon would have the
+necessary privileges but it could also access your GitHub cookie, which is
+undesirable from a security perspective.
