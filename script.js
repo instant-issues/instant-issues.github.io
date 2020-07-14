@@ -9,8 +9,6 @@ let repoData = null;
 let downstreams = null;
 const labelFilters = {};
 
-let labelNames = [];
-
 let activeTab = document.querySelector('.tab.active');
 
 document.querySelector('.tabs').addEventListener('click', e => {
@@ -50,14 +48,15 @@ let pattern;
 function suggestLabels(){
 	suggestedLabelContainer.innerHTML = '';
 	if (searchInput.value.length > 1){
-		labelNames.filter(
-			n =>
-			n.toLowerCase().search(pattern) != -1
-			&& !labelFilters[n]
+		repoData.labels.filter(
+			label =>
+			label.name.toLowerCase().search(pattern) != -1
+			&& !labelFilters[label.name]
 		).forEach(label => {
 			let div = document.createElement('div');
 			div.className = 'label';
-			div.textContent = label;
+			div.textContent = label.name;
+			div.title = label.description;
 			div.tabIndex = 0;
 			suggestedLabelContainer.appendChild(div);
 		});
@@ -91,7 +90,6 @@ searchInput.addEventListener('input', e => {
 async function loadIssues(data){
 	repoData = data;
 	refreshResults();
-	labelNames = repoData.labels.map(label => label.name);
 	document.body.classList.add('loaded');
 	searchInput.focus();
 }
