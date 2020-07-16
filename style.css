@@ -58,7 +58,7 @@ header {
 	word-break: break-word;
 }
 #results {
-	margin: 0 1em;
+	padding: 0.2em 1em;
 	overflow: auto;
 }
 #search {
