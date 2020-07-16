@@ -91,11 +91,12 @@ function refreshResults(){
 	});
 
 	Object.keys(groups).forEach(group => {
+		const div = document.createElement('div');
 		if (groups[group].length == 0)
 			return;
 		const h2 = document.createElement('h2');
 		h2.textContent = group;
-		resultsContainer.appendChild(h2);
+		div.appendChild(h2);
 
 		groups[group].forEach(issue => {
 			const a = document.createElement('a');
@@ -104,8 +105,9 @@ function refreshResults(){
 			a.textContent = issue.title;
 			a.target = '_blank';
 			a.title = issue.labels.join(', ');
-			resultsContainer.appendChild(a);
+			div.appendChild(a);
 		});
+		resultsContainer.appendChild(div);
 	});
 
 }
