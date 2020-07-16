@@ -66,7 +66,7 @@ function suggestLabels(){
 
 function refreshResults(){
 	resultsContainer.innerHTML = '';
-	pattern = '\\b' + searchInput.value.toLowerCase();
+	pattern = '(^| )' + searchInput.value.toLowerCase();
 
 	(activeTab.textContent == 'Issues' ? repoData.issues : repoData.pulls)
 	.filter(
