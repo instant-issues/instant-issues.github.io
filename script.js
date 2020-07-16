@@ -25,6 +25,13 @@ document.body.addEventListener('keypress', e => {
 	}
 });
 
+function updateURL(){
+	const params = new URL(document.location).searchParams;
+	params.set('q', searchInput.value);
+	params.delete('label');
+	Object.keys(labelFilters).forEach(label => params.append('label', label));
+	history.replaceState({}, document.title, '?' + params.toString());
+}
 
 suggestedLabelContainer.addEventListener('click', e => {
 	selectedLabelContainer.appendChild(e.target);
@@ -33,6 +40,7 @@ suggestedLabelContainer.addEventListener('click', e => {
 	refreshResults();
 	suggestLabels();
 	searchInput.focus();
+	updateURL();
 });
 
 selectedLabelContainer.addEventListener('click', e => {
@@ -41,9 +49,20 @@ selectedLabelContainer.addEventListener('click', e => {
 	refreshResults();
 	suggestLabels();
 	searchInput.focus();
+	updateURL();
 });
 
 let pattern;
+
+function labelDiv(label){
+	let div = document.createElement('div');
+	div.className = 'label';
+	div.textContent = label.name;
+	div.title = label.description;
+	div.tabIndex = 0;
+	div.setAttribute('role', 'button');
+	return div;
+}
 
 function suggestLabels(){
 	suggestedLabelContainer.innerHTML = '';
@@ -57,13 +76,7 @@ function suggestLabels(){
 			)
 			&& !labelFilters[label.name]
 		).forEach(label => {
-			let div = document.createElement('div');
-			div.className = 'label';
-			div.textContent = label.name;
-			div.title = label.description;
-			div.tabIndex = 0;
-			div.setAttribute('role', 'button');
-			suggestedLabelContainer.appendChild(div);
+			suggestedLabelContainer.appendChild(labelDiv(label));
 		});
 	}
 }
@@ -111,15 +124,32 @@ function refreshResults(){
 	});
 
 }
+
+let historyTimeout = null;
+
 searchInput.addEventListener('input', e => {
 	refreshResults();
 	suggestLabels();
+	if (historyTimeout)
+		clearTimeout(historyTimeout);
+
+	historyTimeout = setTimeout(() => updateURL(), 1000);
 });
 
-async function loadIssues(data){
+async function loadIssues(data, urlParams){
 	repoData = data;
-	refreshResults();
 	document.body.classList.add('loaded');
+	if (urlParams.has('q')){
+		searchInput.value = urlParams.get('q');
+	}
+
+	urlParams.getAll('label').forEach(label => {
+		labelFilters[label] = true;
+		selectedLabelContainer.appendChild(labelDiv(repoData.labels.filter(l => l.name == label)[0]));
+	});
+
+	refreshResults();
+	suggestLabels();
 	searchInput.focus();
 }
 
@@ -132,10 +162,11 @@ async function loadIssues(data){
 	});
 
 	const urlParams = new URL(document.location).searchParams;
+
 	if (urlParams.has('url')){
 		const res = await fetch(urlParams.get('url'));
 		if (res.ok){
-			loadIssues(await res.json());
+			loadIssues(await res.json(), urlParams);
 		} else {
 			resultsContainer.innerHTML = "couldn't load URL";
 		}
@@ -144,11 +175,11 @@ async function loadIssues(data){
 		repoInput.value = repo;
 		let res = await fetch(`https://raw.githubusercontent.com/${repo}/issues/${repo}.json`);
 		if (res.ok){
-			loadIssues(await res.json());
+			loadIssues(await res.json(), urlParams);
 		} else if (repo in downstreams){
 			res = await fetch(`https://raw.githubusercontent.com/${downstreams[repo]}/issues/${repo}.json`);
 			if (res.ok){
-				loadIssues(await res.json());
+				loadIssues(await res.json(), urlParams);
 			} else {
 				resultsContainer.innerHTML = 'failed to load downstream';
 			}
