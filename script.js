@@ -51,7 +51,7 @@ function suggestLabels(){
 		repoData.labels.filter(
 			label =>
 			(
-				label.name.toLowerCase().search(pattern) != -1
+				label.name.toLowerCase().indexOf(searchInput.value.toLowerCase()) != -1
 				||
 				(label.description ?? '').toLowerCase().search(pattern) != -1
 			)
