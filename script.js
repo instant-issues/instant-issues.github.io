@@ -51,7 +51,7 @@ function suggestLabels(){
 		repoData.labels.filter(
 			label =>
 			(
-				label.name.toLowerCase().indexOf(searchInput.value.toLowerCase()) != -1
+				label.name.toLowerCase().search(pattern) != -1
 				||
 				(label.description ?? '').toLowerCase().search(pattern) != -1
 			)
@@ -70,7 +70,7 @@ function suggestLabels(){
 
 function refreshResults(){
 	resultsContainer.innerHTML = '';
-	pattern = '(^| )' + searchInput.value.toLowerCase();
+	pattern = '(^| |\\b)' + searchInput.value.toLowerCase();
 
 	(activeTab.textContent == 'Issues' ? repoData.issues : repoData.pulls)
 	.filter(
