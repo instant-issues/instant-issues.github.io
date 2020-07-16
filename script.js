@@ -50,7 +50,11 @@ function suggestLabels(){
 	if (searchInput.value.length > 1){
 		repoData.labels.filter(
 			label =>
-			label.name.toLowerCase().search(pattern) != -1
+			(
+				label.name.toLowerCase().search(pattern) != -1
+				||
+				(label.description ?? '').toLowerCase().search(pattern) != -1
+			)
 			&& !labelFilters[label.name]
 		).forEach(label => {
 			let div = document.createElement('div');
