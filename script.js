@@ -72,20 +72,42 @@ function refreshResults(){
 	resultsContainer.innerHTML = '';
 	pattern = '(^| |\\b)' + searchInput.value.toLowerCase();
 
+	const groups = {};
+	repoData.commonAlmostDisjointLabels.forEach(l => groups[l] = []);
+	groups.other = [];
+
 	(activeTab.textContent == 'Issues' ? repoData.issues : repoData.pulls)
 	.filter(
 		issue =>
 		issue.title.toLowerCase().search(pattern) != -1
 		&& Object.keys(labelFilters).filter(l => issue.labels.includes(l)).length == Object.keys(labelFilters).length
 	).forEach(issue => {
-		const a = document.createElement('a');
-		a.href = `https://github.com/${repoData.repo}/issues/${issue.num}`;
-		a.className = 'result';
-		a.textContent = issue.title;
-		a.target = '_blank';
-		a.title = issue.labels.join(', ');
-		resultsContainer.appendChild(a);
+		const labels = issue.labels.filter(l => repoData.commonAlmostDisjointLabels.includes(l));
+		if (labels.length == 0){
+			groups.other.push(issue);
+		} else {
+			labels.forEach(label => groups[label].push(issue));
+		}
 	});
+
+	Object.keys(groups).forEach(group => {
+		if (groups[group].length == 0)
+			return;
+		const h2 = document.createElement('h2');
+		h2.textContent = group;
+		resultsContainer.appendChild(h2);
+
+		groups[group].forEach(issue => {
+			const a = document.createElement('a');
+			a.href = `https://github.com/${repoData.repo}/issues/${issue.num}`;
+			a.className = 'result';
+			a.textContent = issue.title;
+			a.target = '_blank';
+			a.title = issue.labels.join(', ');
+			resultsContainer.appendChild(a);
+		});
+	});
+
 }
 searchInput.addEventListener('input', e => {
 	refreshResults();
