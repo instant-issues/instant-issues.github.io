@@ -74,10 +74,10 @@ header {
 .result:hover, .label:not(.active):hover {
 	background: #f5f5f5;
 }
-.tabs {
+[role=tablist] {
 	display: flex;
 }
-.tab {
+[role=tab] {
 	padding: 0.5em 2em;
 	cursor: pointer;
 	user-select: none;
@@ -85,7 +85,7 @@ header {
 	border: 1px solid transparent;
 	border-bottom: 0;
 }
-.tab.active {
+[role=tab][aria-selected=true] {
 	border-color: #ccc;
 	background: #f5f5f5;
 }
@@ -106,10 +106,10 @@ nav form {
 	}
 }
 @media (max-width: 600px) {
-	.tabs {
+	[role=tablist] {
 		width: 100%;
 	}
-	.tab {
+	[role=tab] {
 		margin-top: 1em;
 		flex-grow: 1;
 	}

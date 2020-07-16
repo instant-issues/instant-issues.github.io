@@ -9,18 +9,18 @@ let repoData = null;
 let downstreams = null;
 const labelFilters = {};
 
-let activeTab = document.querySelector('.tab.active');
+let activeTab = document.querySelector('[role=tab][aria-selected=true]');
 
-document.querySelector('.tabs').addEventListener('click', e => {
-	activeTab.classList.remove('active');
+document.querySelector('[role=tablist]').addEventListener('click', e => {
+	activeTab.setAttribute('aria-selected', 'false');
 	activeTab = e.target;
-	e.target.classList.add('active');
+	e.target.setAttribute('aria-selected', 'true');
 	refreshResults();
 	searchInput.focus();
 });
 
-document.getElementById('labels').addEventListener('keypress', e => {
-	if (event.keyCode === 13) {
+document.body.addEventListener('keypress', e => {
+	if (['button', 'tab'].includes(e.target.getAttribute('role')) && e.keyCode === 13) {
 		e.target.click();
 	}
 });
@@ -58,6 +58,7 @@ function suggestLabels(){
 			div.textContent = label.name;
 			div.title = label.description;
 			div.tabIndex = 0;
+			div.setAttribute('role', 'button');
 			suggestedLabelContainer.appendChild(div);
 		});
 	}
