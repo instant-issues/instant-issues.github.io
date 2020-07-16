@@ -65,7 +65,8 @@ header {
 }
 #selectedLabels .label {
 	border-style: solid;
-	background: #eee;
+	background: #d7e8ec;
+	border-color: #687f97;
 }
 .result {
 	display: block;
