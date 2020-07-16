@@ -22,6 +22,13 @@ h1 {
 	margin: 0.3em 0;
 	margin-right: 0.5em;
 }
+h1 a {
+	text-decoration: none;
+	color: #486380;
+}
+h1 a:hover {
+	text-decoration: underline;
+}
 h2 {
 	font-size: inherit;
 	position: sticky;
@@ -29,7 +36,7 @@ h2 {
 	margin: 0;
 	font-weight: normal;
 	background: #eee;
-	padding: 0.1em;
+	padding: 0.1em 0.5em;
 }
 header {
 	display: flex;
@@ -63,8 +70,9 @@ header {
 .result {
 	display: block;
 	text-decoration: none;
-	padding: 0.3em 0;
+	padding: 0.3em;
 	word-break: break-word;
+	color: #0a0a80;
 }
 #results {
 	padding: 0em 1em;
@@ -81,7 +89,7 @@ header {
     box-shadow: 5px 5px 10px #ccc;
 }
 .result:hover, .label:not(.active):hover {
-	background: #f5f5f5;
+	background: #e8f0e9;
 }
 [role=tablist] {
 	display: flex;
@@ -111,7 +119,7 @@ nav form {
 		padding: 0 1em;
 	}
 	.result {
-		padding: 0.5em 0;
+		padding: 0.5em;
 	}
 }
 @media (max-width: 600px) {
