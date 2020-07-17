@@ -41,6 +41,7 @@ suggestedLabelContainer.addEventListener('click', e => {
 	suggestLabels();
 	searchInput.focus();
 	updateURL();
+	resultsContainer.scrollTo(0, 0);
 });
 
 selectedLabelContainer.addEventListener('click', e => {
@@ -50,6 +51,7 @@ selectedLabelContainer.addEventListener('click', e => {
 	suggestLabels();
 	searchInput.focus();
 	updateURL();
+	resultsContainer.scrollTo(0, 0);
 });
 
 let pattern;
