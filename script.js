@@ -17,6 +17,7 @@ const repoInput = document.getElementById('repo');
 const selectedLabelContainer = document.getElementById('selectedLabels');
 const suggestedLabelContainer = document.getElementById('suggestedLabels');
 const downstreamDatalist = document.getElementById('downstreams');
+const repoLink = document.getElementById('repoLink');
 
 let repoData = null;
 let downstreams = null;
@@ -185,6 +186,7 @@ async function loadIssues(data, urlParams){
 	refreshResults();
 	suggestLabels();
 	searchInput.focus();
+	repoLink.href = 'https://github.com/' + repoData.name;
 }
 
 (async function load(){

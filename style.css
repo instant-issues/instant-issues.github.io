@@ -95,6 +95,8 @@ header {
 }
 [role=tablist] {
 	display: flex;
+	flex-grow: 1;
+	padding: 0 1em;
 }
 [role=tab] {
 	padding: 0.5em 2em;
@@ -103,6 +105,7 @@ header {
 	text-align: center;
 	border: 1px solid transparent;
 	border-bottom: 0;
+	width: 50%;
 }
 [role=tab][aria-selected=true] {
 	border-color: #ccc;
@@ -113,15 +116,15 @@ nav {
 	align-items: center;
 	flex-wrap: wrap;
 }
-nav form {
-	margin-right: 1em;
-}
 .count {
 	pointer-events: none;
 	font-size: smaller;
 	background: #e6e6e6;
 	padding: 0.2em 0.4em;
 	border-radius: 4px;
+}
+#repoLink {
+	opacity: 0.4;
 }
 @media (max-width: 1000px) {
 	header, nav, .form, #labels {
