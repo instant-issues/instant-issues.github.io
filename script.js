@@ -103,7 +103,7 @@ function suggestLabels(){
 			(
 				label.name.toLowerCase().search(pattern) != -1
 				||
-				(label.description ?? '').toLowerCase().search(pattern) != -1
+				(label.description || '').toLowerCase().search(pattern) != -1
 			)
 			&& !labelFilters[label.name]
 		).forEach(label => {
