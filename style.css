@@ -116,6 +116,13 @@ nav {
 nav form {
 	margin-right: 1em;
 }
+.count {
+	pointer-events: none;
+	font-size: smaller;
+	background: #e6e6e6;
+	padding: 0.2em 0.4em;
+	border-radius: 4px;
+}
 @media (max-width: 1000px) {
 	header, nav, .form, #labels {
 		padding: 0 1em;

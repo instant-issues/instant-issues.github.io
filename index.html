@@ -4,6 +4,7 @@
 <title>Instant Issues for GitHub</title>
 <link rel=stylesheet href=style.css>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset=utf-8>
 </head>
 <body>
 	<noscript>This page requires JavaScript.</noscript>
@@ -20,8 +21,8 @@
 		github.com/<input id=repo name=repo list=downstreams autofocus placeholder="user/repository" autocomplete=off>
 		</form>
 		<div role=tablist>
-			<span role=tab aria-selected=true tabindex=0>Issues</span>
-			<span role=tab aria-selected=false tabindex=0>Pulls</span>
+			<span role=tab aria-selected=true aria-controls=issues tabindex=0>Issues <span id=issueCount class=count></span></span>
+			<span role=tab aria-selected=false aria-controls=pulls tabindex=0>Pulls <span id=pullCount class=count></span></span>
 		</div>
 		</nav>
 
@@ -32,7 +33,10 @@
 			<div id=selectedLabels></div>
 			<div id=suggestedLabels></div>
 		</div>
-		<div id=results tabindex=-1></div>
+		<div id=results tabindex=-1>
+			<div role=tabpanel id=issues></div>
+			<div role=tabpanel id=pulls hidden></div>
+		</div>
 	</main>
 	<script async defer src="https://buttons.github.io/buttons.js"></script>
 	<script src=script.js></script>

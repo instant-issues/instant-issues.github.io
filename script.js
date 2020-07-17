@@ -1,5 +1,18 @@
 const searchInput = document.getElementById('search');
 const resultsContainer = document.getElementById('results');
+const panels = {
+	issues: document.getElementById('issues'),
+	pulls:  document.getElementById('pulls')
+};
+const results = {
+	issues: [],
+	pulls: []
+};
+const countBadges = {
+	issues: document.getElementById('issueCount'),
+	pulls: document.getElementById('pullCount')
+};
+
 const repoInput = document.getElementById('repo');
 const selectedLabelContainer = document.getElementById('selectedLabels');
 const suggestedLabelContainer = document.getElementById('suggestedLabels');
@@ -9,11 +22,13 @@ let repoData = null;
 let downstreams = null;
 const labelFilters = {};
 
-let activeTab = document.querySelector('[role=tab][aria-selected=true]');
+let activeTab = 'issues';
 
 document.querySelector('[role=tablist]').addEventListener('click', e => {
-	activeTab.setAttribute('aria-selected', 'false');
-	activeTab = e.target;
+	document.querySelector(`[aria-controls=${activeTab}]`).setAttribute('aria-selected', 'false');
+	panels[activeTab].setAttribute('hidden', true);
+	activeTab = e.target.getAttribute('aria-controls');
+	panels[activeTab].removeAttribute('hidden');
 	e.target.setAttribute('aria-selected', 'true');
 	refreshResults();
 	searchInput.focus();
@@ -83,27 +98,10 @@ function suggestLabels(){
 	}
 }
 
-function refreshResults(){
-	resultsContainer.innerHTML = '';
-	pattern = '(^| |\\b)' + searchInput.value.toLowerCase();
-
-	const groups = {};
-	repoData.disjointLabels.forEach(l => groups[l] = []);
-	groups.other = [];
-
-	(activeTab.textContent == 'Issues' ? repoData.issues : repoData.pulls)
-	.filter(
-		issue =>
-		issue.title.toLowerCase().search(pattern) != -1
-		&& Object.keys(labelFilters).filter(l => issue.labels.includes(l)).length == Object.keys(labelFilters).length
-	).forEach(issue => {
-		const labels = issue.labels.filter(l => repoData.disjointLabels.includes(l));
-		if (labels.length == 0){
-			groups.other.push(issue);
-		} else {
-			labels.forEach(label => groups[label].push(issue));
-		}
-	});
+function renderIfNecessary(){
+	if (panels[activeTab].innerHTML != '')
+		return;
+	const groups = results[activeTab];
 
 	Object.keys(groups).forEach(group => {
 		const div = document.createElement('div');
@@ -122,9 +120,41 @@ function refreshResults(){
 			a.title = issue.labels.join(', ');
 			div.appendChild(a);
 		});
-		resultsContainer.appendChild(div);
+		panels[activeTab].appendChild(div);
+	});
+}
+
+function search(tab, pattern){
+	panels[tab].innerHTML = '';
+
+	const groups = {};
+	repoData.disjointLabels.forEach(l => groups[l] = []);
+	groups.other = [];
+	let count = 0;
+
+	repoData[tab].filter(
+		issue =>
+		issue.title.toLowerCase().search(pattern) != -1
+		&& Object.keys(labelFilters).filter(l => issue.labels.includes(l)).length == Object.keys(labelFilters).length
+	).forEach(issue => {
+		count += 1;
+		const labels = issue.labels.filter(l => repoData.disjointLabels.includes(l));
+		if (labels.length == 0){
+			groups.other.push(issue);
+		} else {
+			labels.forEach(label => groups[label].push(issue));
+		}
 	});
 
+	results[tab] = groups;
+	countBadges[tab].textContent = count;
+}
+
+function refreshResults(){
+	pattern = '(^| |\\b)' + searchInput.value.toLowerCase();
+	search('issues', pattern);
+	search('pulls', pattern);
+	renderIfNecessary();
 }
 
 let historyTimeout = null;
