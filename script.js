@@ -14,7 +14,7 @@ const countBadges = {
 };
 const tabs = {
 	issues: document.getElementById('issues-tab'),
-	pulls: document.getElementById('pulls-tab'),
+	pulls: document.getElementById('pulls-tab')
 };
 
 const repoInput = document.getElementById('repo');
@@ -22,12 +22,50 @@ const selectedLabelContainer = document.getElementById('selectedLabels');
 const suggestedLabelContainer = document.getElementById('suggestedLabels');
 const downstreamDatalist = document.getElementById('downstreams');
 const repoLink = document.getElementById('repoLink');
+const showLabels = document.getElementById('showLabels');
+const labelContainer = document.getElementById('labels');
+const toggleLabels = document.getElementById('toggle-labels');
 
 let repoData = null;
 let downstreams = null;
 const labelFilters = {};
 
 let activeTab = 'issues';
+
+toggleLabels.addEventListener('click', (e) => {
+	if (labelContainer.hasAttribute('hidden')){
+		labelContainer.removeAttribute('hidden');
+		resultsContainer.setAttribute('hidden', true);
+		e.stopPropagation();
+		toggleLabels.setAttribute('aria-checked', true);
+	}
+});
+
+labelContainer.addEventListener('click', (e) => {
+	const label = e.target.textContent;
+	if (labelFilters[label]){
+		e.stopPropagation();
+		return;
+	}
+	labelFilters[label] = true;
+	selectedLabelContainer.appendChild(labelDiv(repoData.labels.filter(l => l.name == label)[0]));
+	refreshResults();
+	searchInput.focus();
+});
+
+function hideLabels(){
+	labelContainer.setAttribute('hidden', true);
+	resultsContainer.removeAttribute('hidden');
+	toggleLabels.setAttribute('aria-checked', false);
+}
+
+document.body.addEventListener('click', () => {
+	hideLabels();
+});
+
+searchInput.addEventListener('focus', () => {
+	hideLabels();
+});
 
 function updateURL(){
 	const params = new URL(document.location).searchParams;
@@ -52,12 +90,15 @@ function openTab(tabname){
 	updateURL();
 }
 
-document.querySelector('[role=tablist]').addEventListener('click', e => {
+Object.values(tabs).forEach(tab => tab.addEventListener('click', e => {
 	openTab(e.target.getAttribute('aria-controls'));
-});
+}));
 
-document.body.addEventListener('keypress', e => {
-	if (['button', 'tab'].includes(e.target.getAttribute('role')) && e.keyCode === 13) {
+document.body.addEventListener('keydown', e => {
+	const role = e.target.getAttribute('role');
+	if (['button', 'tab'].includes(role) && e.key === 'Enter') {
+		e.target.click();
+	} else if (role == 'checkbox' && ['Enter', ' '].includes(e.key)){
 		e.target.click();
 	}
 });
@@ -197,6 +238,10 @@ async function loadIssues(data, urlParams){
 	urlParams.getAll('label').forEach(label => {
 		labelFilters[label] = true;
 		selectedLabelContainer.appendChild(labelDiv(repoData.labels.filter(l => l.name == label)[0]));
+	});
+
+	repoData.labels.forEach(label => {
+		labelContainer.appendChild(labelDiv(label));
 	});
 
 	refreshResults();

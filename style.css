@@ -2,6 +2,9 @@ html, body {
 	height: 100%;
 	font-family: sans-serif;
 }
+[hidden] {
+	display: none !important;
+}
 body {
 	margin: 0;
 	display: flex;
@@ -15,6 +18,10 @@ main {
 }
 main {
 	width: 800px;
+}
+#labelSidebar {
+	overflow: auto;
+	scrollbar-width: thin;
 }
 h1 {
 	display: inline;
@@ -46,20 +53,47 @@ header {
 #repo {
 	font-weight: bold;
 }
+#labels {
+	overflow-y: auto;
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    box-shadow: 0px 0px 10px #999;
+}
 .if-loaded {
 	display: none;
 }
 .loaded .if-loaded {
 	display: block;
 }
+#labelBar {
+	margin-bottom: 0.5em;
+	display: flex;
+}
+[role=checkbox]{
+	cursor: pointer;
+	user-select: none;
+	padding: 0.3em;
+}
+[aria-checked=true]{
+	box-shadow: inset 1px 1px 10px #999;
+	background: #eee;
+}
+#labelPills {
+	flex-grow: 1;
+}
 .label {
+	cursor: pointer;
+	user-select: none;
+}
+#labels .label {
+	padding: 0.2em;
+}
+#labelPills .label {
 	display: inline-block;
 	border: 1px dashed #aaa;
 	padding: 0.1em;
 	margin-right: 0.5em;
-	margin-bottom: 1em;
-	cursor: pointer;
-	user-select: none;
+	padding: 0.1em;
 }
 #selectedLabels, #suggestedLabels {
 	display: inline-block;
@@ -98,17 +132,32 @@ header {
 	margin-left: 1em;
 }
 [role=tab] {
-	padding: 0.5em 2em;
+	padding: 0.5em 0em;
 	cursor: pointer;
 	user-select: none;
 	text-align: center;
 	border: 1px solid transparent;
 	border-bottom: 0;
 	width: 50%;
+	position: relative;
+}
+[role=tab]::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #f0f0f0;
+    z-index: -1;
+    transform: skew(-25deg);
 }
 [role=tab][aria-selected=true] {
-	border-color: #ccc;
-	background: #f5f5f5;
+	color: white;
+}
+
+[role=tab][aria-selected=true]::after {
+	background: #6f99c6;
 }
 nav {
 	display: flex;
@@ -118,7 +167,7 @@ nav {
 .count {
 	pointer-events: none;
 	font-size: smaller;
-	background: #e6e6e6;
+	background: #b4c2d05c;
 	padding: 0.2em 0.4em;
 	border-radius: 4px;
 }
@@ -126,7 +175,7 @@ nav {
 	opacity: 0.4;
 }
 @media (max-width: 1000px) {
-	header, nav, .form, #labels {
+	header, nav, .form, #labelPills {
 		padding: 0 1em;
 	}
 	.result {
