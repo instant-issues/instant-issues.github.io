@@ -170,7 +170,7 @@ searchInput.addEventListener('input', e => {
 
 async function loadIssues(data, urlParams){
 	repoData = data;
-	if (!'disjointLabels' in repoData)
+	if (!('disjointLabels' in repoData))
 		repoData.disjointLabels = [];
 	document.body.classList.add('loaded');
 	if (urlParams.has('q')){
