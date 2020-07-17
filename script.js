@@ -26,11 +26,14 @@ const labelFilters = {};
 let activeTab = 'issues';
 
 document.querySelector('[role=tablist]').addEventListener('click', e => {
-	document.querySelector(`[aria-controls=${activeTab}]`).setAttribute('aria-selected', 'false');
+	const prevTab = document.querySelector(`[aria-controls=${activeTab}]`);
+	prevTab.setAttribute('aria-selected', 'false');
+	prevTab.tabIndex = 0;
 	panels[activeTab].setAttribute('hidden', true);
 	activeTab = e.target.getAttribute('aria-controls');
 	panels[activeTab].removeAttribute('hidden');
 	e.target.setAttribute('aria-selected', 'true');
+	e.target.tabIndex = -1;
 	refreshResults();
 	searchInput.focus();
 });

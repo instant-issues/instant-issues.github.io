@@ -96,7 +96,7 @@ header {
 [role=tablist] {
 	display: flex;
 	flex-grow: 1;
-	padding: 0 1em;
+	margin-left: 1em;
 }
 [role=tab] {
 	padding: 0.5em 2em;

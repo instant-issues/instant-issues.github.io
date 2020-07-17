@@ -20,11 +20,11 @@
 
 		github.com/<input id=repo name=repo list=downstreams autofocus placeholder="user/repository" autocomplete=off>
 		</form>
+		<a id=repoLink target=_blank><img src=/assets/external-link.svg></a>
 		<div role=tablist>
-			<span role=tab aria-selected=true aria-controls=issues tabindex=0>Issues <span id=issueCount class=count></span></span>
+			<span role=tab aria-selected=true aria-controls=issues tabindex=-1>Issues <span id=issueCount class=count></span></span>
 			<span role=tab aria-selected=false aria-controls=pulls tabindex=0>Pulls <span id=pullCount class=count></span></span>
 		</div>
-		<a id=repoLink target=_blank><img src=/assets/external-link.svg></a>
 		</nav>
 
 		<div class=form>
