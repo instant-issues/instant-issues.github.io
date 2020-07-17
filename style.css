@@ -30,13 +30,14 @@ h1 a:hover {
 	text-decoration: underline;
 }
 h2 {
-	font-size: inherit;
 	position: sticky;
 	top: 0;
 	margin: 0;
-	font-weight: normal;
-	background: #eee;
 	padding: 0.1em 0.5em;
+	font-size: inherit;
+	font-weight: normal;
+	background: whitesmoke;
+	border: 1px solid #ccc;
 }
 header {
 	display: flex;
