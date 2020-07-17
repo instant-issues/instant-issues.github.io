@@ -12,6 +12,10 @@ const countBadges = {
 	issues: document.getElementById('issueCount'),
 	pulls: document.getElementById('pullCount')
 };
+const tabs = {
+	issues: document.getElementById('issues-tab'),
+	pulls: document.getElementById('pulls-tab'),
+};
 
 const repoInput = document.getElementById('repo');
 const selectedLabelContainer = document.getElementById('selectedLabels');
@@ -25,17 +29,31 @@ const labelFilters = {};
 
 let activeTab = 'issues';
 
-document.querySelector('[role=tablist]').addEventListener('click', e => {
-	const prevTab = document.querySelector(`[aria-controls=${activeTab}]`);
-	prevTab.setAttribute('aria-selected', 'false');
-	prevTab.tabIndex = 0;
+function updateURL(){
+	const params = new URL(document.location).searchParams;
+	params.set('q', searchInput.value);
+	params.delete('label');
+	Object.keys(labelFilters).forEach(label => params.append('label', label));
+	params.set('tab', activeTab);
+	history.replaceState({}, document.title, '?' + params.toString());
+}
+
+function openTab(tabname){
+	tabs[activeTab].setAttribute('aria-selected', 'false');
+	tabs[activeTab].tabIndex = 0;
 	panels[activeTab].setAttribute('hidden', true);
-	activeTab = e.target.getAttribute('aria-controls');
-	panels[activeTab].removeAttribute('hidden');
-	e.target.setAttribute('aria-selected', 'true');
-	e.target.tabIndex = -1;
+
+	tabs[tabname].setAttribute('aria-selected', 'true');
+	tabs[tabname].tabIndex = -1;
+	panels[tabname].removeAttribute('hidden');
+	activeTab = tabname;
 	refreshResults();
 	searchInput.focus();
+	updateURL();
+}
+
+document.querySelector('[role=tablist]').addEventListener('click', e => {
+	openTab(e.target.getAttribute('aria-controls'));
 });
 
 document.body.addEventListener('keypress', e => {
@@ -43,14 +61,6 @@ document.body.addEventListener('keypress', e => {
 		e.target.click();
 	}
 });
-
-function updateURL(){
-	const params = new URL(document.location).searchParams;
-	params.set('q', searchInput.value);
-	params.delete('label');
-	Object.keys(labelFilters).forEach(label => params.append('label', label));
-	history.replaceState({}, document.title, '?' + params.toString());
-}
 
 suggestedLabelContainer.addEventListener('click', e => {
 	selectedLabelContainer.appendChild(e.target);
@@ -179,6 +189,9 @@ async function loadIssues(data, urlParams){
 	document.body.classList.add('loaded');
 	if (urlParams.has('q')){
 		searchInput.value = urlParams.get('q');
+	}
+	if (urlParams.has('tab')){
+		openTab(urlParams.get('tab'));
 	}
 
 	urlParams.getAll('label').forEach(label => {
