@@ -25,6 +25,8 @@ const repoLink = document.getElementById('repoLink');
 const showLabels = document.getElementById('showLabels');
 const labelContainer = document.getElementById('labels');
 const toggleLabels = document.getElementById('toggle-labels');
+const tabList = document.getElementById('tablist');
+const labelBar = document.getElementById('labelBar');
 
 let repoData = null;
 let downstreams = null;
@@ -227,7 +229,12 @@ async function loadIssues(data, urlParams){
 	repoData = data;
 	if (!('disjointLabels' in repoData))
 		repoData.disjointLabels = [];
-	document.body.classList.add('loaded');
+
+	repoLink.removeAttribute('hidden');
+	searchInput.removeAttribute('hidden');
+	tabList.removeAttribute('hidden');
+	labelBar.removeAttribute('hidden');
+
 	if (urlParams.has('q')){
 		searchInput.value = urlParams.get('q');
 	}

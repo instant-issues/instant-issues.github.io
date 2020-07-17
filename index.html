@@ -20,17 +20,15 @@
 
 		github.com/<input id=repo name=repo list=downstreams autofocus placeholder="user/repository" autocomplete=off>
 		</form>
-		<a id=repoLink target=_blank><img src=/assets/external-link.svg></a>
-		<div role=tablist>
+		<a id=repoLink target=_blank hidden><img src=/assets/external-link.svg></a>
+		<div id=tablist role=tablist hidden>
 			<span id=issues-tab role=tab aria-selected=true aria-controls=issues tabindex=-1>Issues <span id=issueCount class=count></span></span>
 			<span id=pulls-tab role=tab aria-selected=false aria-controls=pulls tabindex=0>Pulls <span id=pullCount class=count></span></span>
 		</div>
 		</nav>
 
-		<div class=form>
-			<input id=search placeholder=Search... autocomplete=off class=if-loaded>
-		</div>
-		<div id=labelBar>
+		<input id=search placeholder=Search... autocomplete=off hidden>
+		<div id=labelBar hidden>
 			<div id=labelPills>
 				<div id=selectedLabels></div>
 				<div id=suggestedLabels></div>
