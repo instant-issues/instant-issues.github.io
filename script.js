@@ -86,7 +86,7 @@ function refreshResults(){
 	pattern = '(^| |\\b)' + searchInput.value.toLowerCase();
 
 	const groups = {};
-	repoData.commonAlmostDisjointLabels.forEach(l => groups[l] = []);
+	repoData.disjointLabels.forEach(l => groups[l] = []);
 	groups.other = [];
 
 	(activeTab.textContent == 'Issues' ? repoData.issues : repoData.pulls)
@@ -95,7 +95,7 @@ function refreshResults(){
 		issue.title.toLowerCase().search(pattern) != -1
 		&& Object.keys(labelFilters).filter(l => issue.labels.includes(l)).length == Object.keys(labelFilters).length
 	).forEach(issue => {
-		const labels = issue.labels.filter(l => repoData.commonAlmostDisjointLabels.includes(l));
+		const labels = issue.labels.filter(l => repoData.disjointLabels.includes(l));
 		if (labels.length == 0){
 			groups.other.push(issue);
 		} else {
@@ -138,6 +138,8 @@ searchInput.addEventListener('input', e => {
 
 async function loadIssues(data, urlParams){
 	repoData = data;
+	if (!'disjointLabels' in repoData)
+		repoData.disjointLabels = [];
 	document.body.classList.add('loaded');
 	if (urlParams.has('q')){
 		searchInput.value = urlParams.get('q');
