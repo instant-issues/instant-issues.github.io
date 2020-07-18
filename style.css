@@ -125,6 +125,25 @@ header {
 	flex-grow: 1;
 	margin-left: 1em;
 }
+.results-group {
+	display: grid;
+	grid-template-columns: 20px auto;
+}
+.priority {
+	background: #eee;
+	width: 20px;
+	cursor: pointer;
+	user-select: none;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.priority span {
+	pointer-events: none;
+}
+.priority:hover {
+	background: #ddd;
+}
 [role=tab] {
 	padding: 0.5em 0em;
 	cursor: pointer;

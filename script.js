@@ -69,6 +69,73 @@ searchInput.addEventListener('focus', () => {
 	hideLabels();
 });
 
+let priorities = {/* id: <1,2,3> */};
+
+function savePriorities(){
+	localStorage.setItem('priorities', JSON.stringify(priorities));
+}
+
+function loadPriorities(){
+	let saved = localStorage.getItem('priorities');
+	if (saved == null){
+		priorites = {};
+	} else {
+		priorities = JSON.parse(saved);
+	}
+}
+
+resultsContainer.addEventListener('keydown', (e) => {
+	if (e.target.classList.contains('result')){
+		e.stopPropagation();
+		if (e.key > 0 && e.key < 4){
+			priorities[e.target.previousSibling.dataset.issue] = parseInt(e.key);
+			e.target.previousSibling.children[0].textContent = e.key;
+			savePriorities();
+		} else if (e.key == 'Delete'){
+			delete priorities[e.target.previousSibling.dataset.issue];
+			e.target.previousSibling.children[0].textContent = '';
+			savePriorities();
+		}
+	}
+});
+
+resultsContainer.addEventListener('click', (e) => {
+	if (e.target.classList.contains('priority')){
+		e.stopPropagation();
+		const num = parseInt(e.target.dataset.issue);
+		let priority;
+		if (num in priorities){
+			if (priorities[num] == 3)
+				delete priorities[num];
+			else
+				priorities[num] += 1;
+		} else {
+			priorities[num] = 1;
+		}
+		e.target.children[0].textContent = priorities[num] || '';
+		savePriorities();
+	}
+});
+
+resultsContainer.addEventListener('contextmenu', (e) => {
+	if (e.target.classList.contains('priority')){
+		e.preventDefault();
+		e.stopPropagation();
+		const num = parseInt(e.target.dataset.issue);
+		let priority;
+		if (num in priorities){
+			if (priorities[num] == 1)
+				delete priorities[num];
+			else
+				priorities[num] -= 1;
+		} else {
+			priorities[num] = 3;
+		}
+		e.target.children[0].textContent = priorities[num] || '';
+		savePriorities();
+	}
+});
+
 function updateURL(){
 	const params = new URL(document.location).searchParams;
 	params.set('q', searchInput.value);
@@ -161,23 +228,36 @@ function renderIfNecessary(){
 	const groups = results[activeTab];
 
 	Object.keys(groups).forEach(group => {
-		const div = document.createElement('div');
+		const groupContainer = document.createElement('div');
 		if (groups[group].length == 0)
 			return;
 		const h2 = document.createElement('h2');
 		h2.textContent = group;
-		div.appendChild(h2);
+		groupContainer.appendChild(h2);
+		const resultsGroup = document.createElement('div');
+		resultsGroup.className = 'results-group';
 
-		groups[group].forEach(issue => {
+		groups[group].sort((a,b) => (priorities[a.num] || 4) - (priorities[b.num] || 4)).forEach(issue => {
+			const priority = document.createElement('div');
+			priority.className = 'priority';
+			priority.dataset.issue = issue.num;
+			priority.title = 'Change priority';
+
+			const prioritySpan = document.createElement('span');
+			prioritySpan.textContent = priorities[issue.num];
+			priority.appendChild(prioritySpan);
+			resultsGroup.appendChild(priority);
+
 			const a = document.createElement('a');
 			a.href = `https://github.com/${repoData.repo}/issues/${issue.num}`;
 			a.className = 'result';
 			a.textContent = issue.title;
 			a.target = '_blank';
 			a.title = issue.labels.join(', ');
-			div.appendChild(a);
+			resultsGroup.appendChild(a);
 		});
-		panels[activeTab].appendChild(div);
+		groupContainer.appendChild(resultsGroup);
+		panels[activeTab].appendChild(groupContainer);
 	});
 }
 
@@ -226,6 +306,7 @@ searchInput.addEventListener('input', e => {
 });
 
 async function loadIssues(data, urlParams){
+	loadPriorities();
 	repoData = data;
 	if (!('disjointLabels' in repoData))
 		repoData.disjointLabels = [];
