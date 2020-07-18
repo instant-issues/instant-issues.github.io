@@ -274,7 +274,10 @@ function search(tab, pattern){
 
 	const groups = {};
 	repoData.disjointLabels.forEach(l => groups[l] = []);
-	groups.other = [];
+	if (onlyPrioritized)
+		groups.prioritized = [];
+	else
+		groups.other = [];
 	let count = 0;
 
 	repoData[tab].filter(
@@ -284,6 +287,10 @@ function search(tab, pattern){
 		&& (!onlyPrioritized || issue.num in priorities)
 	).forEach(issue => {
 		count += 1;
+		if (onlyPrioritized){
+			groups.prioritized.push(issue);
+			return;
+		}
 		const labels = issue.labels.filter(l => repoData.disjointLabels.includes(l));
 		if (labels.length == 0){
 			groups.other.push(issue);
