@@ -142,6 +142,7 @@ prioritizedCheckbox.addEventListener('click', () => {
 	onlyPrioritized = !onlyPrioritized;
 	prioritizedCheckbox.setAttribute('aria-checked', onlyPrioritized);
 	refreshResults();
+	updateURL();
 });
 
 function updateURL(){
@@ -151,6 +152,9 @@ function updateURL(){
 	url.searchParams.set('q', searchInput.value);
 	Object.keys(labelFilters).forEach(label => url.searchParams.append('label', label));
 	url.searchParams.set('tab', activeTab);
+	if (onlyPrioritized)
+		url.searchParams.set('prioritized', '');
+	console.log('updating', url.searchParams.has('prioritized'));
 	history.replaceState({}, document.title, '?' + url.searchParams.toString());
 }
 
@@ -335,6 +339,10 @@ async function loadIssues(data, urlParams){
 
 	if (urlParams.has('q')){
 		searchInput.value = urlParams.get('q');
+	}
+	if (urlParams.has('prioritized')){
+		onlyPrioritized = true;
+		prioritizedCheckbox.setAttribute('aria-checked', true);
 	}
 	if (urlParams.has('tab')){
 		openTab(urlParams.get('tab'));
