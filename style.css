@@ -130,20 +130,27 @@ header {
 	display: grid;
 	grid-template-columns: 20px auto;
 }
+[data-priority="1"]:after{ content: '1'; }
+[data-priority="2"]:after{ content: '2'; }
+[data-priority="3"]:after{ content: '3'; }
+.priority[data-priority="1"]{ background: hsl(230, 18%, 70%); color: #f2f2f2; }
+.priority[data-priority="2"]{ background: hsl(230, 18%, 80%); }
+.priority[data-priority="3"]{ background: hsl(230, 18%, 90%); }
 .priority {
-	background: #eee;
+	background: hsl(0, 0%, 95%);
 	width: 20px;
 	cursor: pointer;
 	user-select: none;
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	color: #5b5b5b;
+}
+.priority[data-priority=""]:hover {
+	background: #ddd;
 }
 .priority span {
 	pointer-events: none;
-}
-.priority:hover {
-	background: #ddd;
 }
 [role=tab] {
 	padding: 0.5em 0em;

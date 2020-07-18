@@ -90,11 +90,11 @@ resultsContainer.addEventListener('keydown', (e) => {
 		e.stopPropagation();
 		if (e.key > 0 && e.key < 4){
 			priorities[e.target.previousSibling.dataset.issue] = parseInt(e.key);
-			e.target.previousSibling.children[0].textContent = e.key;
+			e.target.previousSibling.dataset.priority = e.key;
 			savePriorities();
 		} else if (e.key == 'Delete'){
 			delete priorities[e.target.previousSibling.dataset.issue];
-			e.target.previousSibling.children[0].textContent = '';
+			e.target.previousSibling.dataset.priority = '';
 			savePriorities();
 		}
 	}
@@ -113,7 +113,7 @@ resultsContainer.addEventListener('click', (e) => {
 		} else {
 			priorities[num] = 1;
 		}
-		e.target.children[0].textContent = priorities[num] || '';
+		e.target.dataset.priority = priorities[num] || '';
 		savePriorities();
 	}
 });
@@ -132,7 +132,7 @@ resultsContainer.addEventListener('contextmenu', (e) => {
 		} else {
 			priorities[num] = 3;
 		}
-		e.target.children[0].textContent = priorities[num] || '';
+		e.target.dataset.priority = priorities[num] || '';
 		savePriorities();
 	}
 });
@@ -254,11 +254,8 @@ function renderIfNecessary(){
 			const priority = document.createElement('div');
 			priority.className = 'priority';
 			priority.dataset.issue = issue.num;
+			priority.dataset.priority = priorities[issue.num] || '';
 			priority.title = 'Change priority';
-
-			const prioritySpan = document.createElement('span');
-			prioritySpan.textContent = priorities[issue.num];
-			priority.appendChild(prioritySpan);
 			resultsGroup.appendChild(priority);
 
 			const a = document.createElement('a');
