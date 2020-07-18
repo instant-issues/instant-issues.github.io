@@ -145,12 +145,13 @@ prioritizedCheckbox.addEventListener('click', () => {
 });
 
 function updateURL(){
-	const params = new URL(document.location).searchParams;
-	params.set('q', searchInput.value);
-	params.delete('label');
-	Object.keys(labelFilters).forEach(label => params.append('label', label));
-	params.set('tab', activeTab);
-	history.replaceState({}, document.title, '?' + params.toString());
+	const url = new URL(document.location);
+	url.search = '';
+	url.searchParams.set('repo', repoData.name);
+	url.searchParams.set('q', searchInput.value);
+	Object.keys(labelFilters).forEach(label => url.searchParams.append('label', label));
+	url.searchParams.set('tab', activeTab);
+	history.replaceState({}, document.title, '?' + url.searchParams.toString());
 }
 
 function openTab(tabname){
