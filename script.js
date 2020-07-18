@@ -27,6 +27,7 @@ const labelContainer = document.getElementById('labels');
 const toggleLabels = document.getElementById('toggle-labels');
 const tabList = document.getElementById('tablist');
 const labelBar = document.getElementById('labelBar');
+const prioritizedCheckbox = document.getElementById('only-prioritized');
 
 let repoData = null;
 let downstreams = null;
@@ -134,6 +135,13 @@ resultsContainer.addEventListener('contextmenu', (e) => {
 		e.target.children[0].textContent = priorities[num] || '';
 		savePriorities();
 	}
+});
+
+let onlyPrioritized = false;
+prioritizedCheckbox.addEventListener('click', () => {
+	onlyPrioritized = !onlyPrioritized;
+	prioritizedCheckbox.setAttribute('aria-checked', onlyPrioritized);
+	refreshResults();
 });
 
 function updateURL(){
@@ -273,6 +281,7 @@ function search(tab, pattern){
 		issue =>
 		issue.title.toLowerCase().search(pattern) != -1
 		&& Object.keys(labelFilters).filter(l => issue.labels.includes(l)).length == Object.keys(labelFilters).length
+		&& (!onlyPrioritized || issue.num in priorities)
 	).forEach(issue => {
 		count += 1;
 		const labels = issue.labels.filter(l => repoData.disjointLabels.includes(l));

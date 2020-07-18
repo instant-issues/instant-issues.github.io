@@ -67,6 +67,7 @@ header {
 	cursor: pointer;
 	user-select: none;
 	padding: 0.3em;
+	margin-left: 0.5em;
 }
 [aria-checked=true]{
 	box-shadow: inset 1px 1px 10px #999;
