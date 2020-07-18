@@ -67,7 +67,6 @@ header {
 	cursor: pointer;
 	user-select: none;
 	padding: 0.3em;
-	margin-left: 0.5em;
 }
 [aria-checked=true]{
 	box-shadow: inset 1px 1px 10px #999;
@@ -114,7 +113,7 @@ header {
     font-size: 1em;
     box-sizing: border-box;
     padding: 1em 1.5em;
-    margin: 0.5em 0;
+    margin-bottom: 0.5em;
     border: 1px solid #ccc;
     box-shadow: 5px 5px 10px #ccc;
 }
@@ -184,6 +183,7 @@ nav {
 	display: flex;
 	align-items: center;
 	flex-wrap: wrap;
+    margin-bottom: 0.5em;
 }
 .count {
 	pointer-events: none;

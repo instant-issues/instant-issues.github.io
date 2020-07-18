@@ -1,20 +1,37 @@
 const searchInput = document.getElementById('search');
 const resultsContainer = document.getElementById('results');
-const panels = {
-	issues: document.getElementById('issues'),
-	pulls:  document.getElementById('pulls')
-};
-const results = {
-	issues: [],
-	pulls: []
-};
 const countBadges = {
 	issues: document.getElementById('issueCount'),
 	pulls: document.getElementById('pullCount')
 };
 const tabs = {
-	issues: document.getElementById('issues-tab'),
-	pulls: document.getElementById('pulls-tab')
+	issues: {
+		button: document.getElementById('issues-tab'),
+		panel:  document.getElementById('issues'),
+		results: [],
+		search: searchIssuesAndPulls,
+		searchDirty: true
+	},
+	pulls: {
+		button: document.getElementById('pulls-tab'),
+		panel:  document.getElementById('pulls'),
+		results: [],
+		search: searchIssuesAndPulls,
+		searchDirty: true
+	},
+	triage: {
+		button: document.getElementById('triage-tab'),
+		panel:  document.getElementById('triage'),
+		results: [],
+		search: function(){
+			this.results = {
+				issues: repoData.issues.filter(x => x.num in priorities),
+				pulls : repoData.pulls.filter( x => x.num in priorities)
+			};
+			this.renderDirty = true;
+		},
+		searchDirty: true
+	}
 };
 
 const repoInput = document.getElementById('repo');
@@ -27,13 +44,12 @@ const labelContainer = document.getElementById('labels');
 const toggleLabels = document.getElementById('toggle-labels');
 const tabList = document.getElementById('tablist');
 const labelBar = document.getElementById('labelBar');
-const prioritizedCheckbox = document.getElementById('only-prioritized');
 
 let repoData = null;
 let downstreams = null;
 const labelFilters = {};
 
-let activeTab = 'issues';
+let activeTab = null;
 
 toggleLabels.addEventListener('click', (e) => {
 	if (labelContainer.hasAttribute('hidden')){
@@ -52,7 +68,7 @@ labelContainer.addEventListener('click', (e) => {
 	}
 	labelFilters[label] = true;
 	selectedLabelContainer.appendChild(labelDiv(repoData.labels.filter(l => l.name == label)[0]));
-	refreshResults();
+	updateActiveTab(true);
 	searchInput.focus();
 });
 
@@ -74,6 +90,10 @@ let priorities = {/* id: <1,2,3> */};
 
 function savePriorities(){
 	localStorage.setItem('priorities', JSON.stringify(priorities));
+	tabs.issues.renderDirty = true;
+	tabs.pulls.renderDirty = true;
+	tabs.triage.searchDirty = true;
+	tabs.triage.renderDirty = true;
 }
 
 function loadPriorities(){
@@ -137,14 +157,6 @@ resultsContainer.addEventListener('contextmenu', (e) => {
 	}
 });
 
-let onlyPrioritized = false;
-prioritizedCheckbox.addEventListener('click', () => {
-	onlyPrioritized = !onlyPrioritized;
-	prioritizedCheckbox.setAttribute('aria-checked', onlyPrioritized);
-	refreshResults();
-	updateURL();
-});
-
 function updateURL(){
 	const url = new URL(document.location);
 	url.search = '';
@@ -152,27 +164,36 @@ function updateURL(){
 	url.searchParams.set('q', searchInput.value);
 	Object.keys(labelFilters).forEach(label => url.searchParams.append('label', label));
 	url.searchParams.set('tab', activeTab);
-	if (onlyPrioritized)
-		url.searchParams.set('prioritized', '');
-	console.log('updating', url.searchParams.has('prioritized'));
 	history.replaceState({}, document.title, '?' + url.searchParams.toString());
 }
 
 function openTab(tabname){
-	tabs[activeTab].setAttribute('aria-selected', 'false');
-	tabs[activeTab].tabIndex = 0;
-	panels[activeTab].setAttribute('hidden', true);
+	if (activeTab){
+		tabs[activeTab].button.setAttribute('aria-selected', 'false');
+		tabs[activeTab].button.tabIndex = 0;
+		tabs[activeTab].panel.setAttribute('hidden', true);
+	}
 
-	tabs[tabname].setAttribute('aria-selected', 'true');
-	tabs[tabname].tabIndex = -1;
-	panels[tabname].removeAttribute('hidden');
+	const tab = tabs[tabname];
+	tab.button.setAttribute('aria-selected', 'true');
+	tab.button.tabIndex = -1;
+	tab.panel.removeAttribute('hidden');
 	activeTab = tabname;
-	refreshResults();
+
+	updateActiveTab();
+
+	if (tabname == 'triage'){
+		labelBar.setAttribute('hidden', true);
+		searchInput.setAttribute('hidden', true);
+	} else {
+		labelBar.removeAttribute('hidden');
+		searchInput.removeAttribute('hidden');
+	}
 	searchInput.focus();
 	updateURL();
 }
 
-Object.values(tabs).forEach(tab => tab.addEventListener('click', e => {
+Object.values(tabs).forEach(tab => tab.button.addEventListener('click', e => {
 	openTab(e.target.getAttribute('aria-controls'));
 }));
 
@@ -189,7 +210,7 @@ suggestedLabelContainer.addEventListener('click', e => {
 	selectedLabelContainer.appendChild(e.target);
 	labelFilters[e.target.textContent] = true;
 	searchInput.value = '';
-	refreshResults();
+	updateActiveTab(true);
 	suggestLabels();
 	searchInput.focus();
 	updateURL();
@@ -199,7 +220,7 @@ suggestedLabelContainer.addEventListener('click', e => {
 selectedLabelContainer.addEventListener('click', e => {
 	e.target.remove();
 	delete labelFilters[e.target.textContent];
-	refreshResults();
+	updateActiveTab(true);
 	suggestLabels();
 	searchInput.focus();
 	updateURL();
@@ -235,14 +256,22 @@ function suggestLabels(){
 	}
 }
 
-function renderIfNecessary(){
-	if (panels[activeTab].innerHTML != '')
-		return;
-	const groups = results[activeTab];
+function updateActiveTab(dirty){
+	if (dirty || tabs[activeTab].searchDirty){
+		tabs[activeTab].search();
+		tabs[activeTab].searchDirty = false;
+	}
+	if (dirty || tabs[activeTab].renderDirty){
+		renderTab(tabs[activeTab]);
+		tabs[activeTab].renderDirty = false;
+	}
+}
 
-	Object.keys(groups).forEach(group => {
+function renderTab(tab){
+	tab.panel.innerHTML = '';
+	Object.keys(tab.results).forEach(group => {
 		const groupContainer = document.createElement('div');
-		if (groups[group].length == 0)
+		if (tab.results[group].length == 0)
 			return;
 		const h2 = document.createElement('h2');
 		h2.textContent = group;
@@ -250,7 +279,7 @@ function renderIfNecessary(){
 		const resultsGroup = document.createElement('div');
 		resultsGroup.className = 'results-group';
 
-		groups[group].sort((a,b) => (priorities[a.num] || 4) - (priorities[b.num] || 4)).forEach(issue => {
+		tab.results[group].sort((a,b) => (priorities[a.num] || 4) - (priorities[b.num] || 4)).forEach(issue => {
 			const priority = document.createElement('div');
 			priority.className = 'priority';
 			priority.dataset.issue = issue.num;
@@ -267,55 +296,42 @@ function renderIfNecessary(){
 			resultsGroup.appendChild(a);
 		});
 		groupContainer.appendChild(resultsGroup);
-		panels[activeTab].appendChild(groupContainer);
+		tab.panel.appendChild(groupContainer);
 	});
 }
 
-function search(tab, pattern){
-	panels[tab].innerHTML = '';
-
-	const groups = {};
-	repoData.disjointLabels.forEach(l => groups[l] = []);
-	if (onlyPrioritized)
-		groups.prioritized = [];
-	else
-		groups.other = [];
-	let count = 0;
-
-	repoData[tab].filter(
-		issue =>
-		issue.title.toLowerCase().search(pattern) != -1
-		&& Object.keys(labelFilters).filter(l => issue.labels.includes(l)).length == Object.keys(labelFilters).length
-		&& (!onlyPrioritized || issue.num in priorities)
-	).forEach(issue => {
-		count += 1;
-		if (onlyPrioritized){
-			groups.prioritized.push(issue);
-			return;
-		}
-		const labels = issue.labels.filter(l => repoData.disjointLabels.includes(l));
-		if (labels.length == 0){
-			groups.other.push(issue);
-		} else {
-			labels.forEach(label => groups[label].push(issue));
-		}
-	});
-
-	results[tab] = groups;
-	countBadges[tab].textContent = count;
-}
-
-function refreshResults(){
+function searchIssuesAndPulls(){
 	pattern = '(^| |\\b)' + searchInput.value.toLowerCase();
-	search('issues', pattern);
-	search('pulls', pattern);
-	renderIfNecessary();
+
+	['issues', 'pulls'].forEach(tab => {
+		const groups = {};
+		repoData.disjointLabels.forEach(l => groups[l] = []);
+		groups.other = [];
+		let count = 0;
+
+		repoData[tab].filter(
+			issue =>
+			issue.title.toLowerCase().search(pattern) != -1
+			&& Object.keys(labelFilters).filter(l => issue.labels.includes(l)).length == Object.keys(labelFilters).length
+		).forEach(issue => {
+			count += 1;
+			const labels = issue.labels.filter(l => repoData.disjointLabels.includes(l));
+			if (labels.length == 0){
+				groups.other.push(issue);
+			} else {
+				labels.forEach(label => groups[label].push(issue));
+			}
+		});
+		countBadges[tab].textContent = count;
+		tabs[tab].results = groups;
+		tabs[tab].renderDirty = true;
+	});
 }
 
 let historyTimeout = null;
 
 searchInput.addEventListener('input', e => {
-	refreshResults();
+	updateActiveTab(true);
 	suggestLabels();
 	if (historyTimeout)
 		clearTimeout(historyTimeout);
@@ -337,13 +353,6 @@ async function loadIssues(data, urlParams){
 	if (urlParams.has('q')){
 		searchInput.value = urlParams.get('q');
 	}
-	if (urlParams.has('prioritized')){
-		onlyPrioritized = true;
-		prioritizedCheckbox.setAttribute('aria-checked', true);
-	}
-	if (urlParams.has('tab')){
-		openTab(urlParams.get('tab'));
-	}
 
 	urlParams.getAll('label').forEach(label => {
 		labelFilters[label] = true;
@@ -354,7 +363,9 @@ async function loadIssues(data, urlParams){
 		labelContainer.appendChild(labelDiv(label));
 	});
 
-	refreshResults();
+	searchIssuesAndPulls();
+	openTab(urlParams.get('tab') || 'issues');
+
 	suggestLabels();
 	searchInput.focus();
 	repoLink.href = 'https://github.com/' + repoData.name;

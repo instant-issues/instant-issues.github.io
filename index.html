@@ -22,8 +22,9 @@
 		</form>
 		<a id=repoLink target=_blank hidden><img src=/assets/external-link.svg></a>
 		<div id=tablist role=tablist hidden>
-			<span id=issues-tab role=tab aria-selected=true aria-controls=issues tabindex=-1>Issues <span id=issueCount class=count></span></span>
+			<span id=issues-tab role=tab aria-selected=false aria-controls=issues tabindex=0>Issues <span id=issueCount class=count></span></span>
 			<span id=pulls-tab role=tab aria-selected=false aria-controls=pulls tabindex=0>Pulls <span id=pullCount class=count></span></span>
+			<span id=triage-tab role=tab aria-selected=false aria-controls=triage tabindex=0>Triage</span>
 		</div>
 		</nav>
 
@@ -33,13 +34,13 @@
 				<div id=selectedLabels></div>
 				<div id=suggestedLabels></div>
 			</div>
-			<span id=only-prioritized role=checkbox aria-checked=false tabindex=0 title="Only show prioritized issues">Prioritized</span>
 			<span id=toggle-labels role=checkbox aria-checked=false tabindex=0 title="Show label picker">Labels</span>
 		</div>
 		<div id=labels hidden></div>
 		<div id=results tabindex=-1>
-			<div role=tabpanel id=issues></div>
+			<div role=tabpanel id=issues hidden></div>
 			<div role=tabpanel id=pulls hidden></div>
+			<div role=tabpanel id=triage hidden></div>
 		</div>
 	</main>
 	<script async defer src="https://buttons.github.io/buttons.js"></script>
