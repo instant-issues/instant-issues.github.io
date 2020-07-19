@@ -344,7 +344,7 @@ function searchIssuesAndPulls(){
 		repoData[tab].filter(
 			issue =>
 			issue.title.toLowerCase().search(pattern) != -1 &&
-			Object.keys(selectedLabelElements).filter(l => issue.labels.includes(l)).length == Object.keys(selectedLabelElements).length
+			Object.keys(selectedLabelElements).every(label => issue.labels.includes(label))
 		).forEach(issue => {
 			count += 1;
 			const labels = issue.labels.filter(l => repoData.disjointLabels.includes(l));
