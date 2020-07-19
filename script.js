@@ -166,12 +166,12 @@ resultsContainer.addEventListener('keydown', (e) => {
 	if (e.target.classList.contains('result')){
 		e.stopPropagation();
 		if (e.key >= MAX_PRIORITY && e.key <= MIN_PRIORITY){
-			priorities[e.target.previousSibling.dataset.issue] = parseInt(e.key);
-			e.target.previousSibling.dataset.priority = e.key;
+			priorities[e.target.dataset.issue] = parseInt(e.key);
+			e.target.firstChild.dataset.priority = e.key;
 			savePriorities();
 		} else if (e.key == 'Delete'){
-			delete priorities[e.target.previousSibling.dataset.issue];
-			e.target.previousSibling.dataset.priority = '';
+			delete priorities[e.target.dataset.issue];
+			e.target.firstChild.dataset.priority = '';
 			savePriorities();
 		}
 	}
@@ -179,6 +179,7 @@ resultsContainer.addEventListener('keydown', (e) => {
 
 resultsContainer.addEventListener('click', (e) => {
 	if (e.target.classList.contains('priority')){
+		e.preventDefault();
 		e.stopPropagation();
 		const num = parseInt(e.target.dataset.issue);
 		let priority;
@@ -323,19 +324,24 @@ function renderTab(tab){
 		resultsGroup.className = 'results-group';
 
 		tab.results[group].sort((a,b) => (priorities[a.num] || MIN_PRIORITY + 1) - (priorities[b.num] || MIN_PRIORITY + 1)).forEach(issue => {
-			const priority = document.createElement('div');
-			priority.className = 'priority';
-			priority.dataset.issue = issue.num;
-			priority.dataset.priority = priorities[issue.num] || '';
-			priority.title = 'Change priority';
-			resultsGroup.appendChild(priority);
-
 			const a = document.createElement('a');
+			a.dataset.issue = issue.num;
 			a.href = `https://github.com/${repoData.repo}/issues/${issue.num}`;
 			a.className = 'result';
-			a.textContent = issue.title;
 			a.target = '_blank';
 			a.title = issue.labels.join(', ');
+
+			const priority = document.createElement('span');
+			priority.className = 'priority';
+			priority.title = 'Change priority';
+			priority.dataset.priority = priorities[issue.num] || '';
+			a.appendChild(priority);
+
+			const title = document.createElement('text');
+			title.textContent = issue.title;
+			title.className = 'result-title';
+			a.appendChild(title);
+
 			resultsGroup.appendChild(a);
 		});
 		groupContainer.appendChild(resultsGroup);
