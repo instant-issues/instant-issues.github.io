@@ -137,14 +137,14 @@ let priorities = {/* issue_num: priority */};
 // Priorities are between MAX_PRIORITY and MIN_PRIORITY (inclusive).
 
 function savePriorities(){
-	localStorage.setItem('priorities', JSON.stringify(priorities));
+	localStorage.setItem('priorities-' + repoData.name, JSON.stringify(priorities));
 	tabs.issues.renderDirty = true;
 	tabs.pulls.renderDirty = true;
 	tabs.triage.searchDirty = true;
 }
 
 function readPriorities(){
-	let saved = localStorage.getItem('priorities');
+	let saved = localStorage.getItem('priorities-' + repoData.name);
 	if (saved == null){
 		priorites = {};
 	} else {
@@ -378,8 +378,8 @@ searchInput.addEventListener('input', e => {
 });
 
 async function loadIssues(data, urlParams){
-	readPriorities();
 	repoData = data;
+	readPriorities();
 	if (!('disjointLabels' in repoData))
 		repoData.disjointLabels = [];
 
