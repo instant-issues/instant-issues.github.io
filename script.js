@@ -139,11 +139,17 @@ const MIN_PRIORITY = 3;
 let priorities = {/* issue_num: priority */};
 // Priorities are between MAX_PRIORITY and MIN_PRIORITY (inclusive).
 
+const triageCountBadge = document.getElementById('triageCount');
+function updateTriageCount(){
+	triageCountBadge.textContent = Object.keys(priorities).length;
+}
+
 function savePriorities(){
 	localStorage.setItem('priorities-' + repoData.name, JSON.stringify(priorities));
 	tabs.issues.renderDirty = true;
 	tabs.pulls.renderDirty = true;
 	tabs.triage.searchDirty = true;
+	updateTriageCount();
 }
 
 function readPriorities(){
@@ -153,6 +159,7 @@ function readPriorities(){
 	} else {
 		priorities = JSON.parse(saved);
 	}
+	updateTriageCount();
 }
 
 resultsContainer.addEventListener('keydown', (e) => {
