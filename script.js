@@ -47,18 +47,32 @@ const selectedLabelContainer = document.getElementById('selectedLabels');
 const labelFilters = {};
 const suggestedLabelElements = {/* label: element */};
 
-function selectLabel(label){
-	labelFilters[label] = true;
-	updateActiveTab(true);
+function labelIsSelected(label){
+	return labelFilters[label] == true;
+}
 
-	if (label in suggestedLabelElements){
-		selectedLabelContainer.appendChild(suggestedLabelElements[label]);
-		delete suggestedLabelElements[label];
-	} else {
-		selectedLabelContainer.appendChild(labelDiv(repoData.labels.filter(l => l.name == label)[0]));
+function selectLabel(label){
+	if (labelIsSelected(label)){
+		console.warn(`label "${label}" is already selected`);
+		return false;
 	}
 
-	searchInput.focus();
+	let div;
+	if (label in suggestedLabelElements){
+		div = suggestedLabelElements[label];
+		delete suggestedLabelElements[label];
+	} else {
+		const labelData = repoData.labels.filter(l => l.name == label);
+		if (labelData.length == 0){
+			console.warn(`couldn't find label "${label}"`);
+			return false;
+		}
+		div = labelDiv(labelData[0]);
+	}
+
+	selectedLabelContainer.appendChild(div);
+	labelFilters[label] = true;
+	return true;
 }
 
 const labelContainer = document.getElementById('labels');
@@ -85,12 +99,14 @@ toggleLabels.addEventListener('click', (e) => {
 
 labelContainer.addEventListener('click', (e) => {
 	const label = e.target.textContent;
-	if (labelFilters[label]){
+	if (labelIsSelected(label)){
 		e.stopPropagation();
-		return;
+	} else {
+		selectLabel(label);
+		updateActiveTab(true);
+		updateURL();
+		searchInput.focus();
 	}
-	selectLabel(label);
-	updateURL();
 });
 
 function hideLabels(){
@@ -221,8 +237,10 @@ document.body.addEventListener('keydown', e => {
 
 const suggestedLabelContainer = document.getElementById('suggestedLabels');
 suggestedLabelContainer.addEventListener('click', e => {
-	selectLabel(e.target.text);
+	selectLabel(e.target.textContent);
 	searchInput.value = '';
+	searchInput.focus();
+	updateActiveTab(true);
 	suggestLabels();
 	updateURL();
 	resultsContainer.scrollTo(0, 0);
@@ -248,7 +266,7 @@ function suggestLabels(){
 			(
 				label.name.toLowerCase().search(pattern) != -1 ||
 				(label.description || '').toLowerCase().search(pattern) != -1
-			) && !labelFilters[label.name]
+			) && !labelIsSelected(label.name)
 		).forEach(label => {
 			const div = labelDiv(label);
 			suggestedLabelElements[label.name] = div;
@@ -359,10 +377,7 @@ async function loadIssues(data, urlParams){
 		searchInput.value = urlParams.get('q');
 	}
 
-	urlParams.getAll('label').forEach(label => {
-		labelFilters[label] = true;
-		selectedLabelContainer.appendChild(labelDiv(repoData.labels.filter(l => l.name == label)[0]));
-	});
+	urlParams.getAll('label').forEach(label => selectLabel(label));
 
 	repoData.labels.forEach(label => {
 		labelContainer.appendChild(labelDiv(label));
