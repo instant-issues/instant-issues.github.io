@@ -424,6 +424,44 @@ async function loadIssues(data, urlParams){
 	repoLink.removeAttribute('hidden');
 }
 
+searchInput.addEventListener('keydown', (e) => {
+	if (e.key == 'ArrowDown'){
+		tabs[activeTab].panel.querySelector('.result').focus();
+		e.preventDefault();
+	}
+});
+resultsContainer.addEventListener('keydown', (e) => {
+	if (e.key == 'ArrowDown'){
+		e.preventDefault();
+		let offset = e.target.offsetHeight;
+		if (e.target.nextElementSibling)
+			e.target.nextElementSibling.focus();
+		else {
+			e.target.parentElement.parentElement.nextElementSibling.querySelector('.result').focus();
+			offset += e.target.parentElement.firstChild.offsetHeight;
+		}
+		if (e.target.offsetTop > resultsContainer.offsetHeight / 2){
+			resultsContainer.scrollBy(0, offset);
+		}
+	} else if (e.key == 'ArrowUp'){
+		e.preventDefault();
+		let offset = (e.target.previousElementSibling || e.target).offsetHeight;
+		if (e.target.previousElementSibling)
+			e.target.previousElementSibling.focus();
+		else {
+			const previousGroup = e.target.parentElement.parentElement.previousElementSibling;
+			if (previousGroup == null){
+				searchInput.focus();
+				return;
+			}
+			previousGroup.querySelector('.result:last-of-type').focus();
+			offset += e.target.parentElement.firstChild.offsetHeight;
+		}
+		if (e.target.offsetTop < resultsContainer.scrollHeight - resultsContainer.offsetHeight / 2)
+			resultsContainer.scrollBy(0, -offset);
+	}
+});
+
 (async function load(){
 	const downstreams = await (await fetch('https://raw.githubusercontent.com/instant-issues/instant-issues.github.io/downstreams/downstreams.json')).json();
 	Object.keys(downstreams).forEach(downstream => {

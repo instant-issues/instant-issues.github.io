@@ -106,9 +106,14 @@ header {
 	color: #0a0a80;
 	word-break: break-word;
 }
+.result:focus {
+	outline: 3px solid #486380;
+	outline-offset: -2px;
+}
 #results {
 	padding: 0em 1em;
 	overflow: auto;
+	position: relative;
 }
 #searchInput {
 	width: 100%;
