@@ -30,18 +30,49 @@ const tabs = {
 	}
 };
 
+let activeTab = null;
+let repoData = null;
+
+function labelDiv(label){
+	let div = document.createElement('div');
+	div.className = 'label';
+	div.textContent = label.name;
+	div.title = label.description;
+	div.tabIndex = 0;
+	div.setAttribute('role', 'button');
+	return div;
+}
+
 const selectedLabelContainer = document.getElementById('selectedLabels');
-const suggestedLabelContainer = document.getElementById('suggestedLabels');
-const downstreamDatalist = document.getElementById('downstreams');
+const labelFilters = {};
+const suggestedLabelElements = {/* label: element */};
+
+function selectLabel(label){
+	labelFilters[label] = true;
+	updateActiveTab(true);
+
+	if (label in suggestedLabelElements){
+		selectedLabelContainer.appendChild(suggestedLabelElements[label]);
+		delete suggestedLabelElements[label];
+	} else {
+		selectedLabelContainer.appendChild(labelDiv(repoData.labels.filter(l => l.name == label)[0]));
+	}
+
+	searchInput.focus();
+}
+
 const labelContainer = document.getElementById('labels');
 const toggleLabels = document.getElementById('toggle-labels');
-const labelBar = document.getElementById('labelBar');
 
-let repoData = null;
-let downstreams = null;
-const labelFilters = {};
-
-let activeTab = null;
+function updateURL(){
+	const url = new URL(document.location);
+	url.search = '';
+	url.searchParams.set('repo', repoData.name);
+	url.searchParams.set('q', searchInput.value);
+	Object.keys(labelFilters).forEach(label => url.searchParams.append('label', label));
+	url.searchParams.set('tab', activeTab);
+	history.replaceState({}, document.title, '?' + url.searchParams.toString());
+}
 
 toggleLabels.addEventListener('click', (e) => {
 	if (labelContainer.hasAttribute('hidden')){
@@ -58,10 +89,8 @@ labelContainer.addEventListener('click', (e) => {
 		e.stopPropagation();
 		return;
 	}
-	labelFilters[label] = true;
-	selectedLabelContainer.appendChild(labelDiv(repoData.labels.filter(l => l.name == label)[0]));
-	updateActiveTab(true);
-	searchInput.focus();
+	selectLabel(label);
+	updateURL();
 });
 
 function hideLabels(){
@@ -149,15 +178,7 @@ resultsContainer.addEventListener('contextmenu', (e) => {
 	}
 });
 
-function updateURL(){
-	const url = new URL(document.location);
-	url.search = '';
-	url.searchParams.set('repo', repoData.name);
-	url.searchParams.set('q', searchInput.value);
-	Object.keys(labelFilters).forEach(label => url.searchParams.append('label', label));
-	url.searchParams.set('tab', activeTab);
-	history.replaceState({}, document.title, '?' + url.searchParams.toString());
-}
+const labelBar = document.getElementById('labelBar');
 
 function openTab(tabname){
 	if (activeTab){
@@ -198,13 +219,11 @@ document.body.addEventListener('keydown', e => {
 	}
 });
 
+const suggestedLabelContainer = document.getElementById('suggestedLabels');
 suggestedLabelContainer.addEventListener('click', e => {
-	selectedLabelContainer.appendChild(e.target);
-	labelFilters[e.target.textContent] = true;
+	selectLabel(e.target.text);
 	searchInput.value = '';
-	updateActiveTab(true);
 	suggestLabels();
-	searchInput.focus();
 	updateURL();
 	resultsContainer.scrollTo(0, 0);
 });
@@ -221,16 +240,6 @@ selectedLabelContainer.addEventListener('click', e => {
 
 let pattern;
 
-function labelDiv(label){
-	let div = document.createElement('div');
-	div.className = 'label';
-	div.textContent = label.name;
-	div.title = label.description;
-	div.tabIndex = 0;
-	div.setAttribute('role', 'button');
-	return div;
-}
-
 function suggestLabels(){
 	suggestedLabelContainer.innerHTML = '';
 	if (searchInput.value.length > 1){
@@ -241,7 +250,9 @@ function suggestLabels(){
 				(label.description || '').toLowerCase().search(pattern) != -1
 			) && !labelFilters[label.name]
 		).forEach(label => {
-			suggestedLabelContainer.appendChild(labelDiv(label));
+			const div = labelDiv(label);
+			suggestedLabelElements[label.name] = div;
+			suggestedLabelContainer.appendChild(div);
 		});
 	}
 }
@@ -369,11 +380,11 @@ async function loadIssues(data, urlParams){
 }
 
 (async function load(){
-	downstreams = await (await fetch('https://raw.githubusercontent.com/instant-issues/instant-issues.github.io/downstreams/downstreams.json')).json();
+	const downstreams = await (await fetch('https://raw.githubusercontent.com/instant-issues/instant-issues.github.io/downstreams/downstreams.json')).json();
 	Object.keys(downstreams).forEach(downstream => {
 		const opt = document.createElement('option');
 		opt.value = downstream;
-		downstreamDatalist.appendChild(opt);
+		document.getElementById('downstreamDatalist').appendChild(opt);
 	});
 
 	const urlParams = new URL(document.location).searchParams;
