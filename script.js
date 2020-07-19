@@ -136,7 +136,7 @@ function savePriorities(){
 	tabs.triage.searchDirty = true;
 }
 
-function loadPriorities(){
+function readPriorities(){
 	let saved = localStorage.getItem('priorities');
 	if (saved == null){
 		priorites = {};
@@ -366,7 +366,7 @@ searchInput.addEventListener('input', e => {
 });
 
 async function loadIssues(data, urlParams){
-	loadPriorities();
+	readPriorities();
 	repoData = data;
 	if (!('disjointLabels' in repoData))
 		repoData.disjointLabels = [];
