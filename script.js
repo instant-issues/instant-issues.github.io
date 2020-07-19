@@ -1,9 +1,5 @@
-const searchInput = document.getElementById('search');
+const searchInput = document.getElementById('searchInput');
 const resultsContainer = document.getElementById('results');
-const countBadges = {
-	issues: document.getElementById('issueCount'),
-	pulls: document.getElementById('pullCount')
-};
 const tabs = {
 	issues: {
 		button: document.getElementById('issues-tab'),
@@ -34,15 +30,11 @@ const tabs = {
 	}
 };
 
-const repoInput = document.getElementById('repo');
 const selectedLabelContainer = document.getElementById('selectedLabels');
 const suggestedLabelContainer = document.getElementById('suggestedLabels');
 const downstreamDatalist = document.getElementById('downstreams');
-const repoLink = document.getElementById('repoLink');
-const showLabels = document.getElementById('showLabels');
 const labelContainer = document.getElementById('labels');
 const toggleLabels = document.getElementById('toggle-labels');
-const tabList = document.getElementById('tablist');
 const labelBar = document.getElementById('labelBar');
 
 let repoData = null;
@@ -298,6 +290,11 @@ function renderTab(tab){
 	});
 }
 
+const countBadges = {
+	issues: document.getElementById('issueCount'),
+	pulls: document.getElementById('pullCount')
+};
+
 function searchIssuesAndPulls(){
 	pattern = '(^| |\\b)' + searchInput.value.toLowerCase();
 
@@ -343,9 +340,8 @@ async function loadIssues(data, urlParams){
 	if (!('disjointLabels' in repoData))
 		repoData.disjointLabels = [];
 
-	repoLink.removeAttribute('hidden');
 	searchInput.removeAttribute('hidden');
-	tabList.removeAttribute('hidden');
+	document.getElementById('tablist').removeAttribute('hidden');
 	labelBar.removeAttribute('hidden');
 
 	if (urlParams.has('q')){
@@ -366,7 +362,10 @@ async function loadIssues(data, urlParams){
 
 	suggestLabels();
 	searchInput.focus();
+
+	const repoLink = document.getElementById('repoLink');
 	repoLink.href = 'https://github.com/' + repoData.name;
+	repoLink.removeAttribute('hidden');
 }
 
 (async function load(){
@@ -388,7 +387,7 @@ async function loadIssues(data, urlParams){
 		}
 	} else if (urlParams.get('repo')){
 		const repo = urlParams.get('repo');
-		repoInput.value = repo;
+		document.getElementById('repoInput').value = repo;
 		let res = await fetch(`https://raw.githubusercontent.com/${repo}/issues/${repo}.json`);
 		if (res.ok){
 			loadIssues(await res.json(), urlParams);

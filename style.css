@@ -50,7 +50,7 @@ header {
 	display: flex;
 	align-items: center;
 }
-#repo {
+#repoInput {
 	font-weight: bold;
 }
 #labels {
@@ -108,7 +108,7 @@ header {
 	padding: 0em 1em;
 	overflow: auto;
 }
-#search {
+#searchInput {
 	width: 100%;
     font-size: 1em;
     box-sizing: border-box;
