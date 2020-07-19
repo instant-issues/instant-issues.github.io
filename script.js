@@ -272,15 +272,18 @@ let regex;
 function suggestLabels(){
 	suggestedLabelContainer.innerHTML = '';
 	if (searchInput.value.length > 1){
-		repoData.labels.filter(
-			label =>
-			(
-				regex.test(label.name.toLowerCase()) ||
-				regex.test((label.description || '').toLowerCase())
-			) && !labelIsSelected(label.name)
-		).forEach(label => {
-			const div = labelDiv(label);
-			suggestedLabelElements[label.name] = div;
+		repoData.labels.map(label => {
+			return {
+				label: label,
+				nameMatches: regex.test(label.name.toLowerCase()),
+				descriptionMatches: regex.test((label.description || '').toLowerCase())
+			};
+		})
+		.filter(obj => obj.nameMatches || obj.descriptionMatches)
+		.sort(obj => !obj.nameMatches)
+		.forEach(obj => {
+			const div = labelDiv(obj.label);
+			suggestedLabelElements[obj.label.name] = div;
 			suggestedLabelContainer.appendChild(div);
 		});
 	}
