@@ -267,7 +267,7 @@ selectedLabelContainer.addEventListener('click', e => {
 	resultsContainer.scrollTo(0, 0);
 });
 
-let pattern;
+let regex;
 
 function suggestLabels(){
 	suggestedLabelContainer.innerHTML = '';
@@ -275,8 +275,8 @@ function suggestLabels(){
 		repoData.labels.filter(
 			label =>
 			(
-				label.name.toLowerCase().search(pattern) != -1 ||
-				(label.description || '').toLowerCase().search(pattern) != -1
+				regex.test(label.name.toLowerCase()) ||
+				regex.test((label.description || '').toLowerCase())
 			) && !labelIsSelected(label.name)
 		).forEach(label => {
 			const div = labelDiv(label);
@@ -336,7 +336,7 @@ const countBadges = {
 };
 
 function searchIssuesAndPulls(){
-	pattern = '(^| |\\b)' + searchInput.value.toLowerCase();
+	regex = new RegExp('(^| |\\b)' + searchInput.value.toLowerCase());
 
 	['issues', 'pulls'].forEach(tab => {
 		const groups = {};
@@ -346,7 +346,7 @@ function searchIssuesAndPulls(){
 
 		repoData[tab].filter(
 			issue =>
-			issue.title.toLowerCase().search(pattern) != -1 &&
+			regex.test(issue.title.toLowerCase()) &&
 			Object.keys(selectedLabelElements).every(label => issue.labels.includes(label))
 		).forEach(issue => {
 			count += 1;
