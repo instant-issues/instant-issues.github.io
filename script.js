@@ -34,6 +34,7 @@ let repoData = null;
 
 function labelDiv(label){
 	let div = document.createElement('div');
+	div.dataset.label = label.name;
 	div.className = 'label';
 	div.textContent = label.name;
 	div.title = label.description;
@@ -108,7 +109,7 @@ toggleLabels.addEventListener('click', (e) => {
 });
 
 labelPopover.addEventListener('click', (e) => {
-	const label = e.target.textContent;
+	const label = e.target.dataset.label;
 	if (labelIsSelected(label)){
 		deselectLabel(label);
 	} else {
@@ -240,7 +241,7 @@ document.body.addEventListener('keydown', e => {
 
 const suggestedLabelContainer = document.getElementById('suggestedLabels');
 suggestedLabelContainer.addEventListener('click', e => {
-	selectLabel(e.target.textContent);
+	selectLabel(e.target.dataset.label);
 	searchInput.value = '';
 	searchInput.focus();
 	updateActiveTab(true);
@@ -250,7 +251,7 @@ suggestedLabelContainer.addEventListener('click', e => {
 });
 
 selectedLabelContainer.addEventListener('click', e => {
-	deselectLabel(e.target.textContent);
+	deselectLabel(e.target.dataset.label);
 	updateActiveTab(true);
 	suggestLabels();
 	searchInput.focus();
