@@ -44,17 +44,17 @@ function labelDiv(label){
 }
 
 const selectedLabelContainer = document.getElementById('selectedLabels');
-const labelFilters = {};
 const suggestedLabelElements = {/* label: element */};
+const selectedLabelElements = {/* label: element */};
 
 function labelIsSelected(label){
-	return labelFilters[label] == true;
+	return selectedLabelElements[label] !== undefined;
 }
 
 function selectLabel(label){
 	if (labelIsSelected(label)){
 		console.warn(`label "${label}" is already selected`);
-		return false;
+		return;
 	}
 
 	let div;
@@ -65,14 +65,22 @@ function selectLabel(label){
 		const labelData = repoData.labels.filter(l => l.name == label);
 		if (labelData.length == 0){
 			console.warn(`couldn't find label "${label}"`);
-			return false;
+			return;
 		}
 		div = labelDiv(labelData[0]);
 	}
 
 	selectedLabelContainer.appendChild(div);
-	labelFilters[label] = true;
-	return true;
+	selectedLabelElements[label] = div;
+}
+
+function deselectLabel(label){
+	if (!labelIsSelected(label)){
+		console.warn(`label "${label}" is not selected`);
+		return;
+	}
+	selectedLabelElements[label].remove();
+	delete selectedLabelElements[label];
 }
 
 const labelContainer = document.getElementById('labels');
@@ -83,7 +91,7 @@ function updateURL(){
 	url.search = '';
 	url.searchParams.set('repo', repoData.name);
 	url.searchParams.set('q', searchInput.value);
-	Object.keys(labelFilters).forEach(label => url.searchParams.append('label', label));
+	Object.keys(selectedLabelElements).forEach(label => url.searchParams.append('label', label));
 	url.searchParams.set('tab', activeTab);
 	history.replaceState({}, document.title, '?' + url.searchParams.toString());
 }
@@ -100,13 +108,13 @@ toggleLabels.addEventListener('click', (e) => {
 labelContainer.addEventListener('click', (e) => {
 	const label = e.target.textContent;
 	if (labelIsSelected(label)){
-		e.stopPropagation();
+		deselectLabel(label);
 	} else {
 		selectLabel(label);
-		updateActiveTab(true);
-		updateURL();
-		searchInput.focus();
 	}
+	updateActiveTab(true);
+	updateURL();
+	searchInput.focus();
 });
 
 function hideLabels(){
@@ -247,8 +255,7 @@ suggestedLabelContainer.addEventListener('click', e => {
 });
 
 selectedLabelContainer.addEventListener('click', e => {
-	e.target.remove();
-	delete labelFilters[e.target.textContent];
+	deselectLabel(e.target.textContent);
 	updateActiveTab(true);
 	suggestLabels();
 	searchInput.focus();
@@ -336,7 +343,7 @@ function searchIssuesAndPulls(){
 		repoData[tab].filter(
 			issue =>
 			issue.title.toLowerCase().search(pattern) != -1 &&
-			Object.keys(labelFilters).filter(l => issue.labels.includes(l)).length == Object.keys(labelFilters).length
+			Object.keys(selectedLabelElements).filter(l => issue.labels.includes(l)).length == Object.keys(selectedLabelElements).length
 		).forEach(issue => {
 			count += 1;
 			const labels = issue.labels.filter(l => repoData.disjointLabels.includes(l));
