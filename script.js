@@ -128,7 +128,13 @@ function hideLabels(){
 document.body.addEventListener('click', hideLabels);
 searchInput.addEventListener('focus', hideLabels);
 
-let priorities = {/* id: <1,2,3> */};
+const MAX_PRIORITY = 1;
+const MIN_PRIORITY = 3;
+// Since the keyboard handling code directly maps number keys
+// to priorities MIN_PRIORITY is only supported up to 9.
+
+let priorities = {/* issue_num: priority */};
+// Priorities are between MAX_PRIORITY and MIN_PRIORITY (inclusive).
 
 function savePriorities(){
 	localStorage.setItem('priorities', JSON.stringify(priorities));
@@ -149,7 +155,7 @@ function readPriorities(){
 resultsContainer.addEventListener('keydown', (e) => {
 	if (e.target.classList.contains('result')){
 		e.stopPropagation();
-		if (e.key > 0 && e.key < 4){
+		if (e.key >= MAX_PRIORITY && e.key <= MIN_PRIORITY){
 			priorities[e.target.previousSibling.dataset.issue] = parseInt(e.key);
 			e.target.previousSibling.dataset.priority = e.key;
 			savePriorities();
@@ -167,12 +173,12 @@ resultsContainer.addEventListener('click', (e) => {
 		const num = parseInt(e.target.dataset.issue);
 		let priority;
 		if (num in priorities){
-			if (priorities[num] == 3)
+			if (priorities[num] == MIN_PRIORITY)
 				delete priorities[num];
 			else
 				priorities[num] += 1;
 		} else {
-			priorities[num] = 1;
+			priorities[num] = MAX_PRIORITY;
 		}
 		e.target.dataset.priority = priorities[num] || '';
 		savePriorities();
@@ -186,12 +192,12 @@ resultsContainer.addEventListener('contextmenu', (e) => {
 		const num = parseInt(e.target.dataset.issue);
 		let priority;
 		if (num in priorities){
-			if (priorities[num] == 1)
+			if (priorities[num] == MAX_PRIORITY)
 				delete priorities[num];
 			else
 				priorities[num] -= 1;
 		} else {
-			priorities[num] = 3;
+			priorities[num] = MIN_PRIORITY;
 		}
 		e.target.dataset.priority = priorities[num] || '';
 		savePriorities();
@@ -301,7 +307,7 @@ function renderTab(tab){
 		const resultsGroup = document.createElement('div');
 		resultsGroup.className = 'results-group';
 
-		tab.results[group].sort((a,b) => (priorities[a.num] || 4) - (priorities[b.num] || 4)).forEach(issue => {
+		tab.results[group].sort((a,b) => (priorities[a.num] || MIN_PRIORITY + 1) - (priorities[b.num] || MIN_PRIORITY + 1)).forEach(issue => {
 			const priority = document.createElement('div');
 			priority.className = 'priority';
 			priority.dataset.issue = issue.num;

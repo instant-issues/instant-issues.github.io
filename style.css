@@ -129,9 +129,7 @@ header {
 	display: grid;
 	grid-template-columns: 20px auto;
 }
-[data-priority="1"]:after{ content: '1'; }
-[data-priority="2"]:after{ content: '2'; }
-[data-priority="3"]:after{ content: '3'; }
+[data-priority]:after{content: attr(data-priority);}
 .priority[data-priority="1"]{ background: hsl(230, 18%, 70%); color: #f2f2f2; }
 .priority[data-priority="2"]{ background: hsl(230, 18%, 80%); }
 .priority[data-priority="3"]{ background: hsl(230, 18%, 90%); }
