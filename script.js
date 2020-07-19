@@ -181,7 +181,7 @@ resultsContainer.addEventListener('click', (e) => {
 	if (e.target.classList.contains('priority')){
 		e.preventDefault();
 		e.stopPropagation();
-		const num = parseInt(e.target.dataset.issue);
+		const num = parseInt(e.target.parentElement.dataset.issue);
 		let priority;
 		if (num in priorities){
 			if (priorities[num] == MIN_PRIORITY)
@@ -200,7 +200,7 @@ resultsContainer.addEventListener('contextmenu', (e) => {
 	if (e.target.classList.contains('priority')){
 		e.preventDefault();
 		e.stopPropagation();
-		const num = parseInt(e.target.dataset.issue);
+		const num = parseInt(e.target.parentElement.dataset.issue);
 		let priority;
 		if (num in priorities){
 			if (priorities[num] == MAX_PRIORITY)
