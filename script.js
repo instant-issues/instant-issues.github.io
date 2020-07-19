@@ -120,13 +120,13 @@ labelPopover.addEventListener('click', (e) => {
 	searchInput.focus();
 });
 
-function hideLabels(){
+function closeLabelPopover(){
 	labelPopover.setAttribute('hidden', true);
 	resultsContainer.removeAttribute('hidden');
 	toggleLabels.setAttribute('aria-checked', false);
 }
-document.body.addEventListener('click', hideLabels);
-searchInput.addEventListener('focus', hideLabels);
+document.body.addEventListener('click', closeLabelPopover);
+searchInput.addEventListener('focus', closeLabelPopover);
 
 const MAX_PRIORITY = 1;
 const MIN_PRIORITY = 3;
@@ -242,6 +242,8 @@ document.body.addEventListener('keydown', e => {
 		e.target.click();
 	} else if (role == 'checkbox' && ['Enter', ' '].includes(e.key)){
 		e.target.click();
+	} else if (e.key == 'Escape'){
+		closeLabelPopover();
 	}
 });
 
