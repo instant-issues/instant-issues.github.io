@@ -245,11 +245,9 @@ function suggestLabels(){
 		repoData.labels.filter(
 			label =>
 			(
-				label.name.toLowerCase().search(pattern) != -1
-				||
+				label.name.toLowerCase().search(pattern) != -1 ||
 				(label.description || '').toLowerCase().search(pattern) != -1
-			)
-			&& !labelFilters[label.name]
+			) && !labelFilters[label.name]
 		).forEach(label => {
 			suggestedLabelContainer.appendChild(labelDiv(label));
 		});
@@ -311,8 +309,8 @@ function searchIssuesAndPulls(){
 
 		repoData[tab].filter(
 			issue =>
-			issue.title.toLowerCase().search(pattern) != -1
-			&& Object.keys(labelFilters).filter(l => issue.labels.includes(l)).length == Object.keys(labelFilters).length
+			issue.title.toLowerCase().search(pattern) != -1 &&
+			Object.keys(labelFilters).filter(l => issue.labels.includes(l)).length == Object.keys(labelFilters).length
 		).forEach(issue => {
 			count += 1;
 			const labels = issue.labels.filter(l => repoData.disjointLabels.includes(l));
