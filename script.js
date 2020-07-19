@@ -72,6 +72,7 @@ function selectLabel(label){
 
 	selectedLabelContainer.appendChild(div);
 	selectedLabelElements[label] = div;
+	// TODO: add class in labelPopover
 }
 
 function deselectLabel(label){
@@ -81,9 +82,10 @@ function deselectLabel(label){
 	}
 	selectedLabelElements[label].remove();
 	delete selectedLabelElements[label];
+	// TODO: remove class in labelPopover
 }
 
-const labelContainer = document.getElementById('labels');
+const labelPopover = document.getElementById('labelPopover');
 const toggleLabels = document.getElementById('toggle-labels');
 
 function updateURL(){
@@ -97,15 +99,15 @@ function updateURL(){
 }
 
 toggleLabels.addEventListener('click', (e) => {
-	if (labelContainer.hasAttribute('hidden')){
-		labelContainer.removeAttribute('hidden');
+	if (labelPopover.hasAttribute('hidden')){
+		labelPopover.removeAttribute('hidden');
 		resultsContainer.setAttribute('hidden', true);
 		e.stopPropagation();
 		toggleLabels.setAttribute('aria-checked', true);
 	}
 });
 
-labelContainer.addEventListener('click', (e) => {
+labelPopover.addEventListener('click', (e) => {
 	const label = e.target.textContent;
 	if (labelIsSelected(label)){
 		deselectLabel(label);
@@ -118,7 +120,7 @@ labelContainer.addEventListener('click', (e) => {
 });
 
 function hideLabels(){
-	labelContainer.setAttribute('hidden', true);
+	labelPopover.setAttribute('hidden', true);
 	resultsContainer.removeAttribute('hidden');
 	toggleLabels.setAttribute('aria-checked', false);
 }
@@ -138,7 +140,6 @@ function savePriorities(){
 	tabs.issues.renderDirty = true;
 	tabs.pulls.renderDirty = true;
 	tabs.triage.searchDirty = true;
-	tabs.triage.renderDirty = true;
 }
 
 function loadPriorities(){
@@ -387,7 +388,7 @@ async function loadIssues(data, urlParams){
 	urlParams.getAll('label').forEach(label => selectLabel(label));
 
 	repoData.labels.forEach(label => {
-		labelContainer.appendChild(labelDiv(label));
+		labelPopover.appendChild(labelDiv(label));
 	});
 
 	searchIssuesAndPulls();
