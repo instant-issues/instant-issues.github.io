@@ -30,7 +30,6 @@ const tabs = {
 	}
 };
 
-let activeTab = null;
 let repoData = null;
 
 function labelDiv(label){
@@ -85,8 +84,7 @@ function deselectLabel(label){
 	// TODO: remove class in labelPopover
 }
 
-const labelPopover = document.getElementById('labelPopover');
-const toggleLabels = document.getElementById('toggle-labels');
+let activeTab = null;
 
 function updateURL(){
 	const url = new URL(document.location);
@@ -98,6 +96,8 @@ function updateURL(){
 	history.replaceState({}, document.title, '?' + url.searchParams.toString());
 }
 
+const labelPopover = document.getElementById('labelPopover');
+const toggleLabels = document.getElementById('toggle-labels');
 toggleLabels.addEventListener('click', (e) => {
 	if (labelPopover.hasAttribute('hidden')){
 		labelPopover.removeAttribute('hidden');
@@ -124,14 +124,8 @@ function hideLabels(){
 	resultsContainer.removeAttribute('hidden');
 	toggleLabels.setAttribute('aria-checked', false);
 }
-
-document.body.addEventListener('click', () => {
-	hideLabels();
-});
-
-searchInput.addEventListener('focus', () => {
-	hideLabels();
-});
+document.body.addEventListener('click', hideLabels);
+searchInput.addEventListener('focus', hideLabels);
 
 let priorities = {/* id: <1,2,3> */};
 
