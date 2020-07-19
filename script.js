@@ -86,14 +86,17 @@ function deselectLabel(label){
 }
 
 let activeTab = null;
+const defaultTab = 'issues';
 
 function updateURL(){
 	const url = new URL(document.location);
 	url.search = '';
 	url.searchParams.set('repo', repoData.name);
-	url.searchParams.set('q', searchInput.value);
+	if (searchInput.value.length > 0)
+		url.searchParams.set('q', searchInput.value);
 	Object.keys(selectedLabelElements).forEach(label => url.searchParams.append('label', label));
-	url.searchParams.set('tab', activeTab);
+	if (activeTab != defaultTab)
+		url.searchParams.set('tab', activeTab);
 	history.replaceState({}, document.title, '?' + url.searchParams.toString());
 }
 
@@ -398,7 +401,7 @@ async function loadIssues(data, urlParams){
 	});
 
 	searchIssuesAndPulls();
-	openTab(urlParams.get('tab') || 'issues');
+	openTab(urlParams.get('tab') || defaultTab);
 
 	suggestLabels();
 	searchInput.focus();
